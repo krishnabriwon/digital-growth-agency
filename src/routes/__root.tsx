@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { Header, Footer } from "@/components/site/Layout";
+import { Header, Footer, FloatingWhatsApp } from "@/components/site/Layout";
 import { siteConfig } from "@/lib/site-config";
 import { trackPageView, trackingHeadScripts } from "@/lib/tracking";
 import { Button } from "@/components/ui/button";
@@ -55,7 +55,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: siteConfig.name },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#092B55" },
-      ...(matches.some((match) => match.globalNotFound) ? [
+      ...(matches.some((match) => match.status === "notFound") ? [
         { title: "Page Not Found | Digital Marketing Agency" },
         { name: "description", content: "This page is unavailable. Explore Digital Marketing Agency services or contact us about your business goals." },
         { property: "og:title", content: "Page Not Found | Digital Marketing Agency" },
@@ -115,6 +115,7 @@ function RootComponent() {
         <Outlet />
       </main>
       <Footer />
+      <FloatingWhatsApp />
     </QueryClientProvider>
   );
 }

@@ -93,6 +93,23 @@ export function ContactOptions({ location, light = false }: { location: string; 
   );
 }
 
+export function FloatingWhatsApp() {
+  if (!hasWhatsApp()) return null;
+  const { whatsapp } = siteConfig.contact;
+  return (
+    <a
+      href={`https://wa.me/${whatsapp}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat on WhatsApp"
+      onClick={() => pushEvent({ event: "whatsapp_click", link_location: "floating_button" })}
+      className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[#25D366]/30"
+    >
+      <MessageCircle className="h-7 w-7" />
+    </a>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="bg-gradient-navy text-navy-foreground">
