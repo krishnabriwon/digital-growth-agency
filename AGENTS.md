@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Application rules
+- Keep TanStack file routes and the shared site shell; service and article data drive their detail templates to keep all pages consistent.
+- Public enquiry saves use an isolated server publishable client with INSERT-only RLS access; never use administrative credentials for contact submissions.
+- Confirm enquiries and emit lead events only after an explicit successful save; session-scoped confirmation prevents direct visits from claiming a submission.
+- Select Nitro's Vercel preset only in Vercel CI so external hosting does not replace Lovable's managed deployment target.

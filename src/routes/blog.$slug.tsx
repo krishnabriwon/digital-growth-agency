@@ -22,7 +22,8 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function Post() {
-  const p = getPost(Route.useLoaderData().slug)!;
+  const p = getPost(Route.useLoaderData().slug);
+  if (!p) throw notFound();
   return (
     <>
       <article className="container-site max-w-3xl py-16 md:py-24">

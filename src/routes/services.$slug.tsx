@@ -17,7 +17,7 @@ export const Route = createFileRoute("/services/$slug")({
     const s = loaderData ? getService(loaderData.slug) : undefined;
     if (!s) return { meta: [{ title: "Service not found | Digital Marketing Agency" }, { name: "robots", content: "noindex" }] };
     return {
-      ...seo({ title: s.seoTitle, description: s.seoDescription, path: `/services/${params.slug}`, type: "article" }),
+      ...seo({ title: s.seoTitle, description: s.seoDescription, path: `/services/${params.slug}` }),
       scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Service", name: s.name, description: s.seoDescription, provider: { "@type": "Organization", name: "Digital Marketing Agency" }, areaServed: "IN" }) }],
     };
   },
@@ -30,7 +30,8 @@ export const Route = createFileRoute("/services/$slug")({
 
 function ServicePage() {
   const { slug } = Route.useLoaderData();
-  const s = getService(slug)!;
+  const s = getService(slug);
+  if (!s) throw notFound();
   const Icon = s.icon;
   return (
     <>

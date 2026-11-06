@@ -4,6 +4,7 @@ import { Menu, X, Phone, MessageCircle, ArrowRight, Check } from "lucide-react";
 import { siteConfig, hasPhone, hasWhatsApp } from "@/lib/site-config";
 import { services, type Service } from "@/lib/services";
 import { pushEvent, trackCta } from "@/lib/tracking";
+import { Button } from "@/components/ui/button";
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -34,20 +35,20 @@ export function Header() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur">
-      <div className="container-site flex h-18 items-center justify-between py-3">
-        <Link to="/" aria-label="Digital Marketing Agency home"><Logo /></Link>
+      <div className="container-site grid h-18 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 lg:flex lg:justify-between">
+        <Link to="/" className="min-w-0" aria-label="Digital Marketing Agency home" onClick={() => setOpen(false)}><Logo /></Link>
         <nav aria-label="Main" className="hidden items-center gap-7 lg:flex">
           {nav.map((n) => (
             <Link key={n.to} to={n.to} className="text-sm font-medium text-foreground/80 transition-colors hover:text-primary" activeProps={{ className: "text-primary" }}>{n.label}</Link>
           ))}
         </nav>
         <div className="hidden lg:block"><BtnLink to="/contact" onClick={() => trackCta("Get a Free Consultation", "header")}>Get a Free Consultation</BtnLink></div>
-        <button className="rounded-md p-2 lg:hidden" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(!open)}>
+        <Button variant="ghost" size="icon" className="shrink-0 lg:hidden" aria-label={open ? "Close menu" : "Open menu"} aria-controls="mobile-navigation" aria-expanded={open} onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
-        </button>
+        </Button>
       </div>
       {open && (
-        <nav aria-label="Mobile" className="border-t bg-background lg:hidden">
+        <nav id="mobile-navigation" aria-label="Mobile" className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t bg-background lg:hidden">
           <div className="container-site flex flex-col py-3">
             {nav.map((n) => (
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="py-3 font-medium">{n.label}</Link>

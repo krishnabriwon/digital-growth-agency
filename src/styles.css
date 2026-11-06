@@ -109,7 +109,8 @@
   h3,
   h4 {
     color: var(--color-navy);
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
   }
 }
 
@@ -171,6 +172,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   * {
     animation: none !important;
     transition: none !important;
