@@ -94,9 +94,14 @@ gtag('js', new Date());`,
         <HeadContent />
       </head>
       <body>
-        {siteConfig.tracking.gtmId && (
-          <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${siteConfig.tracking.gtmId}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} title="gtm" /></noscript>
-        )}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PX3XV6DT"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         {children}
         <Scripts />
       </body>
