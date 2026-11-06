@@ -82,7 +82,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en-IN">
-      <head><HeadContent /></head>
+      <head>
+        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PX3XV6DT" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`,
+          }}
+        />
+        <HeadContent />
+      </head>
       <body>
         {siteConfig.tracking.gtmId && (
           <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${siteConfig.tracking.gtmId}`} height="0" width="0" style={{ display: "none", visibility: "hidden" }} title="gtm" /></noscript>
