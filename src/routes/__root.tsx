@@ -55,7 +55,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: siteConfig.name },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#ffffff" },
-      { name: "color-scheme", content: "light" },
+      { name: "color-scheme", content: "only light" },
+      { name: "supported-color-schemes", content: "light" },
       { name: "author", content: siteConfig.name },
       ...(matches.some((match) => match.status === "notFound") ? [
         { title: "Page Not Found | Digital Marketing Agency" },
@@ -83,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-IN">
+    <html lang="en-IN" className="bg-white">
       <head>
         <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-PX3XV6DT" />
         <script
@@ -95,7 +96,7 @@ gtag('js', new Date());`,
         />
         <HeadContent />
       </head>
-      <body>
+      <body className="min-h-screen bg-white text-foreground antialiased selection:bg-primary/10 selection:text-primary">
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-PX3XV6DT"

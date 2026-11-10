@@ -63,12 +63,14 @@ function ServicePage() {
         <BtnLink to="/services" variant="outline">All services</BtnLink>
       </PageHero>
 
-      <section className="container-site grid gap-10 py-20 lg:grid-cols-[1fr_1.4fr]">
-        <div>
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground"><Icon className="h-7 w-7" aria-hidden="true" /></span>
-          <h2 className="mt-5 text-3xl font-bold">What is {s.name}?</h2>
+      <section className="bg-white py-20">
+        <div className="container-site grid gap-10 lg:grid-cols-[1fr_1.4fr]">
+          <div>
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground"><Icon className="h-7 w-7" aria-hidden="true" /></span>
+            <h2 className="mt-5 text-3xl font-bold">What is {s.name}?</h2>
+          </div>
+          <div className="space-y-4 text-lg text-muted-foreground">{s.overview.map((p) => <p key={p}>{p}</p>)}</div>
         </div>
-        <div className="space-y-4 text-lg text-muted-foreground">{s.overview.map((p) => <p key={p}>{p}</p>)}</div>
       </section>
 
       <section className="bg-surface py-20">
@@ -80,9 +82,11 @@ function ServicePage() {
         </div>
       </section>
 
-      <section className="container-site py-20">
-        <SectionHead eyebrow="Our approach" title="How we deliver" center />
-        <div className="mt-12"><ProcessGrid steps={s.approach} /></div>
+      <section className="bg-white py-20">
+        <div className="container-site">
+          <SectionHead eyebrow="Our approach" title="How we deliver" center />
+          <div className="mt-12"><ProcessGrid steps={s.approach} /></div>
+        </div>
       </section>
 
       <section className="bg-surface py-20">
@@ -92,9 +96,11 @@ function ServicePage() {
         </div>
       </section>
 
-      <section className="container-site grid gap-10 py-20 lg:grid-cols-[1fr_1.3fr]">
-        <SectionHead eyebrow="Enquire" title={`Let's discuss your ${s.shortName} goals`} text="Share a few details and our team will review your requirements and get in touch." />
-        <EnquiryForm defaultService={s.name} />
+      <section className="bg-white py-20">
+        <div className="container-site grid gap-10 lg:grid-cols-[1fr_1.3fr]">
+          <SectionHead eyebrow="Enquire" title={`Let's discuss your ${s.shortName} goals`} text="Share a few details and our team will review your requirements and get in touch." />
+          <EnquiryForm defaultService={s.name} />
+        </div>
       </section>
 
       <section className="bg-surface py-20">

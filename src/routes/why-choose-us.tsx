@@ -14,7 +14,7 @@ export const Route = createFileRoute("/why-choose-us")({
   component: () => (
     <>
       <PageHero eyebrow="Why choose us" title="A marketing partner you can rely on" text="We keep things simple: understand your business, do excellent work, measure honestly and keep improving." />
-      <section className="container-site py-20"><WhyGrid /></section>
+      <section className="bg-white py-20"><div className="container-site"><WhyGrid /></div></section>
       <section className="bg-surface py-20">
         <div className="container-site grid gap-10 lg:grid-cols-2">
           <SectionHead eyebrow="Our commitments" title="What you can expect from us" />

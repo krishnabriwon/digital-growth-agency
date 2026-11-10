@@ -79,15 +79,17 @@ function Home() {
         </div>
       </section>
 
-      <section className="container-site grid gap-10 py-20 lg:grid-cols-2">
-        <SectionHead eyebrow="Who we are" title="A new-generation agency focused on outcomes" />
-        <div className="space-y-4 text-muted-foreground">
-          <p>Digital Marketing Agency is built for businesses that want marketing to be measurable, honest and tied to real growth. We combine search, social, content and web expertise into one connected strategy.</p>
-          <ul className="space-y-3 text-foreground">
-            <CheckItem>Strategies tailored to your goals and budget</CheckItem>
-            <CheckItem>Accurate tracking so every decision is informed</CheckItem>
-            <CheckItem>Clear, jargon-free communication and reporting</CheckItem>
-          </ul>
+      <section className="bg-white py-20">
+        <div className="container-site grid gap-10 lg:grid-cols-2">
+          <SectionHead eyebrow="Who we are" title="A new-generation agency focused on outcomes" />
+          <div className="space-y-4 text-muted-foreground">
+            <p>Digital Marketing Agency is built for businesses that want marketing to be measurable, honest and tied to real growth. We combine search, social, content and web expertise into one connected strategy.</p>
+            <ul className="space-y-3 text-foreground">
+              <CheckItem>Strategies tailored to your goals and budget</CheckItem>
+              <CheckItem>Accurate tracking so every decision is informed</CheckItem>
+              <CheckItem>Clear, jargon-free communication and reporting</CheckItem>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -98,9 +100,11 @@ function Home() {
         </div>
       </section>
 
-      <section className="container-site py-20">
-        <SectionHead eyebrow="Why choose us" title="Built on transparency and accountability" center />
-        <div className="mt-12"><WhyGrid /></div>
+      <section className="bg-white py-20">
+        <div className="container-site">
+          <SectionHead eyebrow="Why choose us" title="Built on transparency and accountability" center />
+          <div className="mt-12"><WhyGrid /></div>
+        </div>
       </section>
 
       <section className="bg-surface py-20">
@@ -110,10 +114,12 @@ function Home() {
         </div>
       </section>
 
-      <section className="container-site py-20">
-        <SectionHead eyebrow="Industries" title="Marketing shaped around your sector" center />
-        <div className="mt-12"><IndustryGrid limit={8} /></div>
-        <div className="mt-8 text-center"><BtnLink to="/industries" variant="outline">View all industries</BtnLink></div>
+      <section className="bg-white py-20">
+        <div className="container-site">
+          <SectionHead eyebrow="Industries" title="Marketing shaped around your sector" center />
+          <div className="mt-12"><IndustryGrid limit={8} /></div>
+          <div className="mt-8 text-center"><BtnLink to="/industries" variant="outline">View all industries</BtnLink></div>
+        </div>
       </section>
 
       <section className="bg-surface py-20">
@@ -125,9 +131,11 @@ function Home() {
         </div>
       </section>
 
-      <section className="container-site max-w-4xl py-20">
-        <SectionHead eyebrow="FAQs" title="Frequently asked questions" center />
-        <div className="mt-10"><Faqs items={homeFaqs} /></div>
+      <section className="bg-white py-20">
+        <div className="container-site max-w-4xl">
+          <SectionHead eyebrow="FAQs" title="Frequently asked questions" center />
+          <div className="mt-10"><Faqs items={homeFaqs} /></div>
+        </div>
       </section>
 
       <CtaBand />

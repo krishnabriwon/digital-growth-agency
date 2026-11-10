@@ -50,18 +50,20 @@ function Post() {
   if (!p) throw notFound();
   return (
     <>
-      <article className="container-site max-w-3xl py-16 md:py-24">
-        <Link to="/blog" className="text-sm font-semibold text-primary">← All resources</Link>
-        <p className="eyebrow mt-6">{p.category} · {p.readTime}</p>
-        <h1 className="mt-3 text-4xl font-extrabold md:text-5xl">{p.title}</h1>
-        <p className="mt-5 text-lg text-muted-foreground">{p.description}</p>
-        {p.sections.map((s) => (
-          <section key={s.heading} className="mt-10">
-            <h2 className="text-2xl font-bold">{s.heading}</h2>
-            {s.body.map((b) => <p key={b} className="mt-4 leading-relaxed">{b}</p>)}
-          </section>
-        ))}
-      </article>
+      <div className="bg-white">
+        <article className="container-site max-w-3xl py-16 md:py-24">
+          <Link to="/blog" className="text-sm font-semibold text-primary">← All resources</Link>
+          <p className="eyebrow mt-6">{p.category} · {p.readTime}</p>
+          <h1 className="mt-3 text-4xl font-extrabold md:text-5xl">{p.title}</h1>
+          <p className="mt-5 text-lg text-muted-foreground">{p.description}</p>
+          {p.sections.map((s) => (
+            <section key={s.heading} className="mt-10">
+              <h2 className="text-2xl font-bold">{s.heading}</h2>
+              {s.body.map((b) => <p key={b} className="mt-4 leading-relaxed">{b}</p>)}
+            </section>
+          ))}
+        </article>
+      </div>
       <CtaBand />
     </>
   );

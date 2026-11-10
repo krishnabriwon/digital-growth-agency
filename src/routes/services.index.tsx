@@ -14,8 +14,10 @@ export const Route = createFileRoute("/services/")({
   component: () => (
     <>
       <PageHero eyebrow="Services" title="Digital marketing services that work together" text="Choose a single specialist service or combine several into an integrated growth plan. Every engagement starts with understanding your goals." />
-      <section className="container-site py-20">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{services.map((s) => <ServiceCard key={s.slug} s={s} />)}</div>
+      <section className="bg-white py-20">
+        <div className="container-site">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{services.map((s) => <ServiceCard key={s.slug} s={s} />)}</div>
+        </div>
       </section>
       <CtaBand title="Not sure which service you need?" text="Tell us about your business and we'll recommend the right mix." />
     </>

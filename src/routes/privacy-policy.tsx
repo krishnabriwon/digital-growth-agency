@@ -18,11 +18,13 @@ export const Route = createFileRoute("/privacy-policy")({
   component: () => (
     <>
       <PageHero eyebrow="Legal" title="Privacy Policy" text="Your privacy matters to us. This policy explains what we collect and how we use it." />
-      <section className="container-site max-w-3xl py-16">
-        {sections.map((s) => (
-          <div key={s.h} className="mb-10"><h2 className="text-2xl font-bold">{s.h}</h2><p className="mt-3 leading-relaxed">{s.p}</p></div>
-        ))}
-      </section>
+      <div className="bg-white">
+        <section className="container-site max-w-3xl py-16">
+          {sections.map((s) => (
+            <div key={s.h} className="mb-10"><h2 className="text-2xl font-bold">{s.h}</h2><p className="mt-3 leading-relaxed">{s.p}</p></div>
+          ))}
+        </section>
+      </div>
     </>
   ),
 });

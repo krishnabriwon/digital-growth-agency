@@ -14,7 +14,7 @@ export const Route = createFileRoute("/industries")({
   component: () => (
     <>
       <PageHero eyebrow="Industries" title="Digital marketing shaped around your sector" text="Every industry has different buyers, regulations and buying cycles. We adapt our strategy to the realities of your market." />
-      <section className="container-site py-20"><IndustryGrid /></section>
+      <section className="bg-white py-20"><div className="container-site"><IndustryGrid /></div></section>
       <CtaBand title="Don't see your industry?" text="We work with businesses of many kinds. Tell us about yours." />
     </>
   ),

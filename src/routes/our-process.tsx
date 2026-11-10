@@ -14,7 +14,7 @@ export const Route = createFileRoute("/our-process")({
   component: () => (
     <>
       <PageHero eyebrow="Our process" title="From first conversation to continuous growth" text="A structured, transparent way of working, so you always know what's happening, why, and what comes next." />
-      <section className="container-site py-20"><ProcessGrid /></section>
+      <section className="bg-white py-20"><div className="container-site"><ProcessGrid /></div></section>
       <CtaBand title="Start with a discovery conversation" />
     </>
   ),
