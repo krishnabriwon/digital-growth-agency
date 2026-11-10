@@ -4,7 +4,13 @@ import { CheckItem, CtaBand, PageHero, SectionHead } from "@/components/site/Lay
 import { WhyGrid } from "@/components/site/Sections";
 
 export const Route = createFileRoute("/why-choose-us")({
-  head: () => seo({ title: "Why Choose Us", description: "Why businesses choose Digital Marketing Agency: goal-first strategy, transparent reporting, integrated expertise, dedicated support and ethical practices.", path: "/why-choose-us" }),
+  head: () =>
+    seo({
+      title: "Why Choose Digital Marketing Agency – Transparency & Proven Growth",
+      description:
+        "Why ambitious businesses across India choose Digital Marketing Agency: goal-first strategy, honest performance reporting, full account ownership, and ethical execution.",
+      path: "/why-choose-us",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="Why choose us" title="A marketing partner you can rely on" text="We keep things simple: understand your business, do excellent work, measure honestly and keep improving." />

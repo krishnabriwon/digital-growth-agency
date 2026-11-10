@@ -4,7 +4,13 @@ import { services } from "@/lib/services";
 import { CtaBand, PageHero, ServiceCard } from "@/components/site/Layout";
 
 export const Route = createFileRoute("/services/")({
-  head: () => seo({ title: "Digital Marketing Services", description: "Explore our 12 digital marketing services: SEO, Google Ads, social media, Meta Ads, websites, content, email, ORM, local SEO, e-commerce, AI marketing and lead generation.", path: "/services" }),
+  head: () =>
+    seo({
+      title: "Digital Marketing Services in India – Full-Suite Agency Solutions",
+      description:
+        "Explore our 12 specialised digital marketing services in India: SEO, Google Ads PPC, Meta Ads, social media, web development, content marketing, and B2B lead generation.",
+      path: "/services",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="Services" title="Digital marketing services that work together" text="Choose a single specialist service or combine several into an integrated growth plan. Every engagement starts with understanding your goals." />

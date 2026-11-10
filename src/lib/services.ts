@@ -38,9 +38,9 @@ export const services: Service[] = [
     shortName: "SEO",
     icon: Search,
     summary: "Earn sustainable organic visibility on Google with technical, on-page and content-led SEO.",
-    seoTitle: "SEO Services in India – Search Engine Optimization",
+    seoTitle: "SEO Services India – Best SEO Agency for Organic Growth",
     seoDescription:
-      "Technical, on-page and content-led SEO services for Indian businesses. Improve organic visibility, attract qualified traffic and build long-term search presence.",
+      "Top SEO services in India by Digital Marketing Agency. Increase Google rankings, drive qualified organic search traffic, and boost ROI with technical and on-page SEO.",
     heroTitle: "SEO that builds lasting organic visibility",
     heroText:
       "We help your website become easier for search engines to understand and more useful for the people searching — so qualified visitors find you without paying for every click.",
@@ -73,9 +73,9 @@ export const services: Service[] = [
     shortName: "Google Ads / PPC",
     icon: MousePointerClick,
     summary: "Reach buyers at the moment of search with structured, conversion-focused Google Ads campaigns.",
-    seoTitle: "Google Ads & PPC Management Services in India",
+    seoTitle: "Google Ads Agency India – PPC Advertising Services",
     seoDescription:
-      "Google Ads and PPC management focused on qualified leads and measurable return. Search, Performance Max, Display and YouTube campaigns with transparent reporting.",
+      "High-ROI Google Ads management and PPC advertising services in India. Certified Google Ads agency driving high-intent leads, phone calls, and revenue.",
     heroTitle: "Google Ads built around measurable outcomes",
     heroText:
       "Appear in front of people actively searching for what you offer, and spend your budget on the clicks most likely to become enquiries and sales.",
@@ -108,9 +108,9 @@ export const services: Service[] = [
     shortName: "Social Media Marketing",
     icon: Share2,
     summary: "Build a consistent, recognisable brand presence across the social platforms your audience uses.",
-    seoTitle: "Social Media Marketing Services in India",
+    seoTitle: "Social Media Marketing Agency India – SMM Services",
     seoDescription:
-      "Strategic social media marketing for Instagram, Facebook, LinkedIn and YouTube. Content planning, creative production and community management for growing brands.",
+      "Results-focused social media marketing services in India. Build brand awareness, engage your audience, and generate qualified leads across social channels.",
     heroTitle: "Social media that builds a brand people remember",
     heroText:
       "Plan, create and manage social content that reflects your brand, connects with your audience and supports your wider business goals.",
@@ -143,9 +143,9 @@ export const services: Service[] = [
     shortName: "Meta Ads",
     icon: Megaphone,
     summary: "Reach the right audiences on Facebook and Instagram with creative-led, data-driven campaigns.",
-    seoTitle: "Meta Ads Services – Facebook & Instagram Advertising",
+    seoTitle: "Meta Ads Agency – Facebook & Instagram Advertising Services India",
     seoDescription:
-      "Facebook and Instagram advertising for leads, sales and awareness. Audience strategy, creative testing, Pixel and Conversions API setup, and ongoing optimisation.",
+      "Scale revenue with high-converting Meta Ads campaigns. Expert Facebook and Instagram advertising agency management for businesses across India.",
     heroTitle: "Facebook & Instagram ads that reach the right people",
     heroText:
       "Use Meta's audience tools to put the right message in front of potential customers — and keep improving results through structured creative testing.",
@@ -178,9 +178,9 @@ export const services: Service[] = [
     shortName: "Website Design",
     icon: MonitorSmartphone,
     summary: "Fast, responsive, conversion-focused websites that represent your brand and generate enquiries.",
-    seoTitle: "Website Design & Development Services in India",
+    seoTitle: "Website Design and Development Agency India",
     seoDescription:
-      "Professional, mobile-first website design and development. Fast, SEO-ready and conversion-focused business websites, landing pages and e-commerce stores.",
+      "Modern, responsive and conversion-optimized web development services in India. Fast-loading business websites built to turn visitors into enquiries.",
     heroTitle: "Websites designed to convert, built to perform",
     heroText:
       "Your website is often the first serious impression a customer has of your business. We design and build sites that look professional, load fast and guide visitors to take action.",
@@ -213,9 +213,9 @@ export const services: Service[] = [
     shortName: "Content Marketing",
     icon: PenLine,
     summary: "Useful, search-friendly content that educates buyers and positions your brand as an authority.",
-    seoTitle: "Content Marketing Services – Blogs, Guides & Strategy",
+    seoTitle: "Content Marketing Services India – Strategy, Blogs & Copywriting",
     seoDescription:
-      "Strategic content marketing for Indian businesses: content strategy, SEO blogs, guides, website copy and repurposing that attract and educate your buyers.",
+      "Authority-building content marketing services. Strategic blog posts, articles, and SEO copywriting that educate buyers and drive organic inbound traffic.",
     heroTitle: "Content that earns attention and builds trust",
     heroText:
       "Answer your customers' real questions with helpful, well-researched content — and turn your website into a resource that attracts and converts.",
@@ -248,9 +248,9 @@ export const services: Service[] = [
     shortName: "Email Marketing",
     icon: Mail,
     summary: "Nurture leads and retain customers with well-designed campaigns and automated email journeys.",
-    seoTitle: "Email Marketing Services – Campaigns & Automation",
+    seoTitle: "Email Marketing Agency India – Automation & Lead Nurturing",
     seoDescription:
-      "Email marketing strategy, campaign design and automation for Indian businesses. Nurture leads, retain customers and drive repeat business with permission-based email.",
+      "Turn prospects into loyal customers with targeted email campaigns, automated drip sequences, segmentation, and retention marketing.",
     heroTitle: "Email marketing that nurtures and retains",
     heroText:
       "Stay connected with leads and customers through relevant, well-timed emails — from welcome sequences to newsletters and automated follow-ups.",
@@ -283,9 +283,9 @@ export const services: Service[] = [
     shortName: "Reputation Management",
     icon: ShieldCheck,
     summary: "Monitor, protect and strengthen how your brand appears across search, reviews and social media.",
-    seoTitle: "Online Reputation Management (ORM) Services in India",
+    seoTitle: "Online Reputation Management (ORM) Services India",
     seoDescription:
-      "Ethical online reputation management: review monitoring, response strategy, search result improvement and brand sentiment tracking for businesses across India.",
+      "Ethical online reputation management agency: review monitoring, response strategy, search result improvement, and brand sentiment tracking across India.",
     heroTitle: "Protect and strengthen your online reputation",
     heroText:
       "What people find when they search your brand influences their decision. We help you monitor, respond and build a positive, accurate online presence.",
@@ -318,9 +318,9 @@ export const services: Service[] = [
     shortName: "Local SEO",
     icon: MapPin,
     summary: "Get found by nearby customers on Google Maps and local search results.",
-    seoTitle: "Local SEO Services – Google Business Profile Optimization",
+    seoTitle: "Local SEO Services India – Google Business Profile Agency",
     seoDescription:
-      "Local SEO services to help customers find your business on Google Maps and local search. Google Business Profile optimisation, local citations and location pages.",
+      "Dominate local search results and Google Maps. Expert Google Business Profile optimization and local citation building for businesses across India.",
     heroTitle: "Be the business nearby customers find first",
     heroText:
       "When people search for services 'near me', the local results decide who gets the call. We help your business show up clearly and accurately.",
@@ -353,9 +353,9 @@ export const services: Service[] = [
     shortName: "E-commerce Marketing",
     icon: ShoppingCart,
     summary: "Grow online store sales with shopping ads, product SEO, retargeting and retention campaigns.",
-    seoTitle: "E-commerce Marketing Services for Online Stores",
+    seoTitle: "E-commerce Marketing Agency India – Scale Online Store Sales",
     seoDescription:
-      "E-commerce marketing for online stores and D2C brands: Google Shopping, Meta catalogue ads, product page SEO, conversion optimisation and retention email.",
+      "Drive profitable sales for your Shopify, WooCommerce, or D2C store with targeted shopping ads, retention email, and conversion rate optimization.",
     heroTitle: "Full-funnel marketing for online stores",
     heroText:
       "From product discovery to repeat purchase, we help D2C brands and online stores attract shoppers, convert them and bring them back.",
@@ -388,9 +388,9 @@ export const services: Service[] = [
     shortName: "AI-Powered Marketing",
     icon: Sparkles,
     summary: "Use AI responsibly to speed up research, personalise campaigns and uncover insights faster.",
-    seoTitle: "AI-Powered Digital Marketing Services",
+    seoTitle: "AI-Powered Digital Marketing Services – Data & Predictive Growth",
     seoDescription:
-      "Practical, responsible AI in digital marketing: faster research, content workflows, audience insights, automation and smarter campaign optimisation for Indian businesses.",
+      "Leverage advanced artificial intelligence for predictive audience targeting, smart ad bidding, dynamic personalization, and campaign optimization in India.",
     heroTitle: "Practical AI for smarter, faster marketing",
     heroText:
       "We apply AI tools where they genuinely help — research, analysis, creative iteration and automation — while keeping strategy and quality in human hands.",
@@ -423,9 +423,9 @@ export const services: Service[] = [
     shortName: "Lead Generation",
     icon: Magnet,
     summary: "Build a predictable pipeline of qualified enquiries with integrated campaigns and landing pages.",
-    seoTitle: "Lead Generation Services for B2B & B2C Businesses",
+    seoTitle: "Lead Generation Agency India – B2B & B2C Qualified Leads",
     seoDescription:
-      "Integrated lead generation services: targeted campaigns, high-converting landing pages, lead qualification and accurate tracking to build a predictable sales pipeline.",
+      "Predictable B2B and B2C lead generation services. High-converting landing pages, paid acquisition funnels, and qualified sales-ready enquiry flows.",
     heroTitle: "A steady pipeline of qualified enquiries",
     heroText:
       "We connect targeted campaigns, persuasive landing pages and accurate tracking into one system designed to generate leads your sales team wants to call.",

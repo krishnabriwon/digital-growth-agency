@@ -54,7 +54,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: siteConfig.name },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#092B55" },
+      { name: "theme-color", content: "#ffffff" },
+      { name: "color-scheme", content: "light" },
+      { name: "author", content: siteConfig.name },
       ...(matches.some((match) => match.status === "notFound") ? [
         { title: "Page Not Found | Digital Marketing Agency" },
         { name: "description", content: "This page is unavailable. Explore Digital Marketing Agency services or contact us about your business goals." },

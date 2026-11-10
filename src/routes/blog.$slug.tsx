@@ -13,7 +13,31 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!p) return { meta: [{ title: "Article not found | Digital Marketing Agency" }, { name: "robots", content: "noindex" }] };
     return {
       ...seo({ title: p.title, description: p.description, path: `/blog/${params.slug}`, type: "article" }),
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: p.title, description: p.description, author: { "@type": "Organization", name: "Digital Marketing Agency" } }) }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: p.title,
+            description: p.description,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://digital-growth-agency-nine.vercel.app/blog/${params.slug}`,
+            },
+            author: {
+              "@type": "Organization",
+              name: "Digital Marketing Agency",
+              url: "https://digital-growth-agency-nine.vercel.app",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "Digital Marketing Agency",
+              logo: "https://digital-growth-agency-nine.vercel.app/logo.png",
+            },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => <div className="container-site py-24 text-center"><h1 className="text-3xl font-bold">Article not found</h1><Link to="/blog" className="mt-6 inline-block font-semibold text-primary">Back to resources</Link></div>,

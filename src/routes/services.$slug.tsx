@@ -18,7 +18,30 @@ export const Route = createFileRoute("/services/$slug")({
     if (!s) return { meta: [{ title: "Service not found | Digital Marketing Agency" }, { name: "robots", content: "noindex" }] };
     return {
       ...seo({ title: s.seoTitle, description: s.seoDescription, path: `/services/${params.slug}` }),
-      scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Service", name: s.name, description: s.seoDescription, provider: { "@type": "Organization", name: "Digital Marketing Agency" }, areaServed: "IN" }) }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: s.name,
+            serviceType: s.shortName,
+            description: s.seoDescription,
+            url: `https://digital-growth-agency-nine.vercel.app/services/${params.slug}`,
+            provider: {
+              "@type": "Organization",
+              name: "Digital Marketing Agency",
+              alternateName: ["DMA", "Digital Marketing Agency India"],
+              url: "https://digital-growth-agency-nine.vercel.app",
+              logo: "https://digital-growth-agency-nine.vercel.app/logo.png",
+            },
+            areaServed: {
+              "@type": "Country",
+              name: "India",
+            },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (

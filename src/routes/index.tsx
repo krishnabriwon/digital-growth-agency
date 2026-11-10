@@ -11,11 +11,52 @@ import { trackCta } from "@/lib/tracking";
 export const Route = createFileRoute("/")({
   head: () => ({
     ...seo({
-      title: "Digital Marketing Agency – Driving Digital Growth. Delivering Real Results.",
-      description: "Digital Marketing Agency helps businesses across Pan India grow with SEO, Google Ads, social media, websites, content and lead generation. Get a free consultation.",
+      title: "Digital Marketing Agency – Digital Marketing Company India | DMA",
+      description: "Digital Marketing Agency is a premier digital marketing company in India. We drive measurable business growth with SEO services, Google Ads PPC, Meta ads, social media & web development across Pan India.",
       path: "/",
     }),
-    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Organization", name: "Digital Marketing Agency", slogan: "Driving Digital Growth. Delivering Real Results.", areaServed: "IN" }) }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": "https://digital-growth-agency-nine.vercel.app/#website",
+              "url": "https://digital-growth-agency-nine.vercel.app",
+              "name": "Digital Marketing Agency",
+              "alternateName": ["DMA", "Digital Marketing Agency India"],
+              "description": "Leading digital marketing company in India driving business growth through SEO, Google Ads, Meta Ads, social media and web development."
+            },
+            {
+              "@type": "Organization",
+              "@id": "https://digital-growth-agency-nine.vercel.app/#organization",
+              "name": "Digital Marketing Agency",
+              "alternateName": ["DMA", "Digital Marketing Agency India"],
+              "url": "https://digital-growth-agency-nine.vercel.app",
+              "logo": "https://digital-growth-agency-nine.vercel.app/logo.png",
+              "slogan": "Driving Digital Growth. Delivering Real Results.",
+              "description": "Premier digital marketing agency providing ROI-focused SEO, Google Ads, Meta Ads, social media marketing, and web development across Pan India.",
+              "areaServed": {
+                "@type": "Country",
+                "name": "India"
+              },
+              "knowsAbout": [
+                "Search Engine Optimization",
+                "Pay-Per-Click Advertising",
+                "Social Media Marketing",
+                "Google Ads",
+                "Meta Ads",
+                "Website Design and Development",
+                "Content Marketing",
+                "Lead Generation"
+              ]
+            }
+          ]
+        }),
+      },
+    ],
   }),
   component: Home,
 });

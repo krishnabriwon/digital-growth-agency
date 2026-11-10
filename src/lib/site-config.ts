@@ -6,6 +6,7 @@
 export const siteConfig = {
   name: "Digital Marketing Agency",
   shortName: "DMA",
+  siteUrl: "https://digital-growth-agency-nine.vercel.app",
   tagline: "Driving Digital Growth. Delivering Real Results.",
   region: "Pan India",
 

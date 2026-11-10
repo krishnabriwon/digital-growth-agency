@@ -4,7 +4,13 @@ import { CheckItem, CtaBand, PageHero, SectionHead } from "@/components/site/Lay
 import { WhyGrid } from "@/components/site/Sections";
 
 export const Route = createFileRoute("/about")({
-  head: () => seo({ title: "About Us", description: "Learn about Digital Marketing Agency — a new, outcome-focused digital marketing partner for businesses across Pan India, built on transparency and ethical practice.", path: "/about" }),
+  head: () =>
+    seo({
+      title: "About Digital Marketing Agency – ROI & Outcome-Driven Team India",
+      description:
+        "Learn about Digital Marketing Agency — a trusted, outcome-focused digital marketing partner for businesses across India built on transparency, integrity and measurable ROI.",
+      path: "/about",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="About us" title="A digital partner built for measurable growth" text="Digital Marketing Agency was founded to give Indian businesses a marketing partner that is strategic, transparent and genuinely invested in their results." />

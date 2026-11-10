@@ -11,6 +11,7 @@ type SeoInput = {
 /** Builds a consistent head() payload with a self-referencing canonical. */
 export function seo({ title, description, path, type = "website", noindex }: SeoInput) {
   const fullTitle = title.includes(siteConfig.name) ? title : `${title} | ${siteConfig.name}`;
+  const canonicalUrl = `${siteConfig.siteUrl}${path.startsWith("/") ? path : `/${path}`}`;
   return {
     meta: [
       { title: fullTitle },
@@ -18,12 +19,15 @@ export function seo({ title, description, path, type = "website", noindex }: Seo
       { property: "og:title", content: fullTitle },
       { property: "og:description", content: description },
       { property: "og:type", content: type },
-      { property: "og:url", content: path },
+      { property: "og:url", content: canonicalUrl },
+      { property: "og:site_name", content: siteConfig.name },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: fullTitle },
       { name: "twitter:description", content: description },
-      ...(noindex ? [{ name: "robots", content: "noindex, nofollow" }] : []),
+      ...(noindex
+        ? [{ name: "robots", content: "noindex, nofollow" }]
+        : [{ name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" }]),
     ],
-    links: [{ rel: "canonical", href: path }],
+    links: [{ rel: "canonical", href: canonicalUrl }],
   };
 }

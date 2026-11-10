@@ -5,7 +5,13 @@ import { EnquiryForm } from "@/components/site/EnquiryForm";
 import { siteConfig, hasEmail } from "@/lib/site-config";
 
 export const Route = createFileRoute("/contact")({
-  head: () => seo({ title: "Contact Us – Get a Free Consultation", description: "Send an enquiry to Digital Marketing Agency. Tell us about your business goals and we'll get in touch to discuss SEO, ads, social media, websites and more.", path: "/contact" }),
+  head: () =>
+    seo({
+      title: "Contact Digital Marketing Agency – Get a Free Growth Consultation",
+      description:
+        "Get in touch with Digital Marketing Agency. Share your requirements for SEO, Google Ads, social media, or website development and receive a strategic plan.",
+      path: "/contact",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="Contact us" title="Let's talk about your growth" text="Share your requirements and our team will review them and get back to you." />

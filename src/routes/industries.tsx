@@ -4,7 +4,13 @@ import { CtaBand, PageHero } from "@/components/site/Layout";
 import { IndustryGrid } from "@/components/site/Sections";
 
 export const Route = createFileRoute("/industries")({
-  head: () => seo({ title: "Industries We Serve", description: "Digital marketing tailored for healthcare, education, real estate, e-commerce, B2B, travel, finance, food, SaaS, automotive, startups and wellness businesses across India.", path: "/industries" }),
+  head: () =>
+    seo({
+      title: "Industries We Serve – Sector-Specific Digital Marketing Solutions",
+      description:
+        "Industry-tailored digital marketing services for healthcare, real estate, B2B, e-commerce, education, SaaS, finance and startups across India.",
+      path: "/industries",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="Industries" title="Digital marketing shaped around your sector" text="Every industry has different buyers, regulations and buying cycles. We adapt our strategy to the realities of your market." />

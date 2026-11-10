@@ -4,7 +4,13 @@ import { blogPosts } from "@/lib/content";
 import { CtaBand, PageHero } from "@/components/site/Layout";
 
 export const Route = createFileRoute("/blog/")({
-  head: () => seo({ title: "Blog & Resources", description: "Practical digital marketing guides on SEO, Google Ads, local search and conversion tracking for business owners in India.", path: "/blog" }),
+  head: () =>
+    seo({
+      title: "Digital Marketing Insights & Strategy Guides | Blog & Resources",
+      description:
+        "Actionable digital marketing guides on SEO, Google Ads, local search optimization, and conversion tracking for ambitious business owners in India.",
+      path: "/blog",
+    }),
   component: () => (
     <>
       <PageHero eyebrow="Resources" title="Practical guides for growing online" text="Clear, useful insights to help you make better digital marketing decisions." />
