@@ -7,9 +7,13 @@ import { enquirySchema } from "./enquiry";
 export const submitEnquiry = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => enquirySchema.parse(data))
   .handler(async ({ data }) => {
-    const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
-    const url = process.env["SUPABASE_URL"];
-    if (!key || !url) throw new Error("Enquiry submission is not configured");
+    const key =
+      process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+      process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+    const url =
+      process.env["SUPABASE_URL"] ||
+      process.env["VITE_SUPABASE_URL"];
+    if (!key || !url) throw new Error("Enquiry submission is not configured on the server");
     // Isolated public client: no visitor session and no browser storage on the server.
     const supabase = createClient<Database>(url, key, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
@@ -30,7 +34,7 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     });
     if (error) {
       console.error("Enquiry insert failed", error.message);
-      throw new Error("We couldn't save your enquiry. Please try again.");
+      throw new Error(error.message || "We couldn't save your enquiry. Please try again.");
     }
     return { ok: true as const };
   });

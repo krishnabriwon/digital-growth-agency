@@ -2,11 +2,12 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Loader2, AlertCircle } from "lucide-react";
-import { enquirySchema, serviceOptions } from "@/lib/enquiry";
+import { enquirySchema, serviceOptions, type EnquiryInput } from "@/lib/enquiry";
 import { submitEnquiry } from "@/lib/enquiry.functions";
 import { trackLead } from "@/lib/tracking";
 import { Button } from "@/components/ui/button";
 import { rememberConfirmedEnquiry, saveConfirmedEnquiry } from "@/lib/enquiry-confirmation";
+import { supabase } from "@/integrations/supabase/client";
 
 type Errors = Partial<Record<string, string>>;
 const field = "mt-1.5 w-full rounded-lg border border-input bg-background px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/25";
@@ -17,6 +18,35 @@ export function EnquiryForm({ defaultService = "" }: { defaultService?: string }
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  async function persistEnquiry(data: EnquiryInput): Promise<{ ok: boolean }> {
+    // 1. Try server function first (isolated public server client)
+    try {
+      const res = await saveEnquiry({ data });
+      if (res && res.ok === true) {
+        return { ok: true };
+      }
+    } catch (serverErr) {
+      console.warn("Server function submission did not succeed, attempting direct database save fallback:", serverErr);
+    }
+
+    // 2. Direct client Supabase fallback using public publishable client with INSERT-only policy
+    const { error } = await supabase.from("contact_submissions").insert({
+      full_name: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      company: data.company ? data.company : null,
+      service: data.service,
+      message: data.message,
+    });
+
+    if (error) {
+      console.error("Enquiry save failed:", error.message);
+      throw new Error(error.message || "Failed to save enquiry to database.");
+    }
+
+    return { ok: true };
+  }
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,15 +64,22 @@ export function EnquiryForm({ defaultService = "" }: { defaultService?: string }
     }
     setErrors({});
     setStatus("loading");
+    setErrorMsg("");
+
     try {
-      await saveConfirmedEnquiry(parsed.data, (data) => saveEnquiry({ data }), () => {
+      await saveConfirmedEnquiry(parsed.data, persistEnquiry, () => {
         rememberConfirmedEnquiry();
         trackLead(parsed.data.service);
       });
       await navigate({ to: "/thank-you" });
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("We couldn't confirm that your enquiry was saved. Please try again in a moment. If the connection was interrupted, it may already have reached us.");
+      const message = err instanceof Error ? err.message : "";
+      if (message && !message.includes("was not confirmed")) {
+        setErrorMsg(`We couldn't confirm that your enquiry was saved (${message}). Please try again in a moment.`);
+      } else {
+        setErrorMsg("We couldn't confirm that your enquiry was saved. Please try again in a moment. If the connection was interrupted, it may already have reached us.");
+      }
     }
   }
 
