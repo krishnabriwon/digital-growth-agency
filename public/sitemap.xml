@@ -109,7 +109,7 @@
     <priority>0.85</priority>
   </url>
 
-  <!-- 3 Blog Articles -->
+  <!-- 6 Blog Articles -->
   <url>
     <loc>https://digital-growth-agency-nine.vercel.app/blog/seo-vs-google-ads-which-is-right-for-your-business</loc>
     <changefreq>monthly</changefreq>
@@ -124,5 +124,20 @@
     <loc>https://digital-growth-agency-nine.vercel.app/blog/how-to-set-up-conversion-tracking-before-running-ads</loc>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://digital-growth-agency-nine.vercel.app/blog/how-to-choose-the-best-digital-marketing-agency-in-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://digital-growth-agency-nine.vercel.app/blog/complete-seo-strategy-for-indian-businesses</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://digital-growth-agency-nine.vercel.app/blog/google-ads-vs-meta-ads-for-lead-generation</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
   </url>
 </urlset>

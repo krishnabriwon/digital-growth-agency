@@ -26,14 +26,14 @@ export const Route = createFileRoute("/")({
               "@id": "https://digital-growth-agency-nine.vercel.app/#website",
               "url": "https://digital-growth-agency-nine.vercel.app",
               "name": "Digital Marketing Agency",
-              "alternateName": ["DMA", "Digital Marketing Agency India"],
+              "alternateName": ["DMA", "Digital Growth Agency", "Digital Marketing Agency India", "Digital Growth Agency India", "DMA India"],
               "description": "Leading digital marketing company in India driving business growth through SEO, Google Ads, Meta Ads, social media and web development."
             },
             {
               "@type": "Organization",
               "@id": "https://digital-growth-agency-nine.vercel.app/#organization",
               "name": "Digital Marketing Agency",
-              "alternateName": ["DMA", "Digital Marketing Agency India"],
+              "alternateName": ["DMA", "Digital Growth Agency", "Digital Marketing Agency India", "Digital Growth Agency India", "DMA India"],
               "url": "https://digital-growth-agency-nine.vercel.app",
               "logo": "https://digital-growth-agency-nine.vercel.app/logo.png",
               "slogan": "Driving Digital Growth. Delivering Real Results.",
@@ -52,6 +52,18 @@ export const Route = createFileRoute("/")({
                 "Content Marketing",
                 "Lead Generation"
               ]
+            },
+            {
+              "@type": "FAQPage",
+              "@id": "https://digital-growth-agency-nine.vercel.app/#faq",
+              "mainEntity": homeFaqs.map((f) => ({
+                "@type": "Question",
+                "name": f.q,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": f.a
+                }
+              }))
             }
           ]
         }),

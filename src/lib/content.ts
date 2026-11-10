@@ -118,6 +118,115 @@ export const blogPosts: BlogPost[] = [
       { heading: "Verify before you spend", body: ["Test every conversion end to end before launching campaigns. Accurate data from day one means every rupee of ad spend teaches you something useful."] },
     ],
   },
+  {
+    slug: "how-to-choose-the-best-digital-marketing-agency-in-india",
+    title: "How to Choose the Best Digital Marketing Agency in India (2026 Guide)",
+    description: "Looking for a reliable digital marketing agency in India? Here are the critical criteria to evaluate before hiring a growth partner.",
+    category: "Agency Selection",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "Why choosing the right digital marketing agency matters",
+        body: [
+          "With thousands of agencies operating across India, finding the right growth partner can feel overwhelming. Many agencies promise instant page-one rankings or overnight viral leads, but few deliver transparent, measurable business returns.",
+          "Choosing the right agency means finding a team that aligns with your specific industry, communicates clearly without jargon, and treats your marketing budget with accountability."
+        ],
+      },
+      {
+        heading: "1. Demand transparent reporting and full account ownership",
+        body: [
+          "Always ensure that your Google Ads, Meta Business Manager, and Google Analytics accounts belong strictly to your company. A credible digital marketing agency will never hold your ad accounts or data hostage.",
+          "Look for agencies that report on business outcomes — cost per qualified lead, conversion rate, and revenue impact — rather than superficial vanity metrics like impressions or raw clicks."
+        ],
+      },
+      {
+        heading: "2. Verify multi-channel expertise across search and social",
+        body: [
+          "Search engines and social media channels don't operate in silos. Your SEO should inform your paid Google Ads keywords, and your content should fuel both social media and email nurture sequences.",
+          "An integrated digital marketing company in India coordinates search, paid performance, and web development into one cohesive growth strategy."
+        ],
+      },
+      {
+        heading: "3. Avoid guaranteed ranking promises",
+        body: [
+          "Google's search algorithm evolves constantly with hundreds of ranking factors. No agency in the world has a direct relationship with Google that allows them to guarantee position #1.",
+          "Ethical agencies focus on sustainable technical foundations, authoritative content, clean backlinks, and continuous Conversion Rate Optimization (CRO)."
+        ],
+      },
+    ],
+  },
+  {
+    slug: "complete-seo-strategy-for-indian-businesses",
+    title: "The Complete SEO Strategy for Indian Businesses: From Audit to Page 1",
+    description: "A comprehensive, step-by-step SEO roadmap designed for businesses in India looking to capture organic search traffic and qualified leads.",
+    category: "Search Marketing",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "Understanding the Indian search landscape",
+        body: [
+          "With over 800 million active internet users in India, consumers and B2B buyers now turn to Google for every purchasing decision. Whether it's finding specialized healthcare, B2B manufacturing, SaaS solutions, or local services, organic search offers compounding ROI.",
+          "Winning in organic search requires more than just sprinkling keywords — it requires technical excellence, high-value content, and rock-solid local signals."
+        ],
+      },
+      {
+        heading: "Phase 1: Technical SEO foundation",
+        body: [
+          "Ensure your website is fast, mobile-first, and easily crawlable by Googlebot. This includes clean XML sitemaps, robots.txt directives, absolute canonical URLs, and Schema.org structured data (Organization, LocalBusiness, and Service schemas).",
+          "Core Web Vitals — Largest Contentful Paint (LCP), Interaction to Next Paint (INP), and Cumulative Layout Shift (CLS) — are direct ranking factors that affect your organic positioning."
+        ],
+      },
+      {
+        heading: "Phase 2: Intent-focused keyword mapping",
+        body: [
+          "Group your keywords into informational, commercial, and transactional intent. High-intent keywords (like 'SEO services India' or 'digital marketing company') should map to dedicated, high-converting service landing pages with clear calls to action.",
+          "Informational queries should be addressed through in-depth blog guides, solving customer questions and building topical authority."
+        ],
+      },
+      {
+        heading: "Phase 3: High-authority link acquisition and digital PR",
+        body: [
+          "Earn links from reputable Indian industry publications, niche directories, and partner organizations. Avoid spammy link networks or bulk directory submissions that risk Google algorithmic penalties."
+        ],
+      },
+    ],
+  },
+  {
+    slug: "google-ads-vs-meta-ads-for-lead-generation",
+    title: "Google Ads vs Meta Ads: Which Paid Channel Delivers Better ROI in India?",
+    description: "Compare Google Search Ads and Meta (Facebook & Instagram) Ads to discover the best ad channel for your budget, industry, and lead generation goals.",
+    category: "Paid Advertising",
+    readTime: "6 min read",
+    sections: [
+      {
+        heading: "Intent vs Disruption: The core distinction",
+        body: [
+          "Google Ads captures high intent: users are actively typing what they want into Google (e.g. 'hire digital marketing agency'). They are already in the buying mindset.",
+          "Meta Ads (Instagram and Facebook) creates interest through disruption: users are browsing their social feeds, and visually compelling creative introduces your brand to potential customers based on demographics, interests, and behaviors."
+        ],
+      },
+      {
+        heading: "When to choose Google Ads",
+        body: [
+          "Google Ads is unbeatable for high-intent B2B services, emergency needs, healthcare, education admissions, and local services where prospects need immediate assistance.",
+          "Cost per click (CPC) can be higher in competitive industries, but conversion rates are typically strong because the user initiated the search."
+        ],
+      },
+      {
+        heading: "When to choose Meta Ads",
+        body: [
+          "Meta Ads excels for visually appealing consumer brands, lifestyle offerings, real estate project showcases, webinars, and low-friction lead generation via Instant Forms.",
+          "It is also the most cost-effective channel for brand awareness and retargeting website visitors who didn't convert on their first visit."
+        ],
+      },
+      {
+        heading: "The hybrid full-funnel approach",
+        body: [
+          "Top-performing brands in India rarely rely on just one platform. A hybrid strategy uses Meta Ads to build broad brand recall and top-of-funnel interest, while Google Search captures active demand and retargets previous visitors to maximize conversions."
+        ],
+      },
+    ],
+  },
 ];
 
 export const getPost = (slug: string) => blogPosts.find((p) => p.slug === slug);
