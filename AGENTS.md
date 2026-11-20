@@ -34,3 +34,4 @@ use the editor.
 - Public enquiry saves use an isolated server publishable client with INSERT-only RLS access; never use administrative credentials for contact submissions.
 - Confirm enquiries and emit lead events only after an explicit successful save; session-scoped confirmation prevents direct visits from claiming a submission.
 - Select Nitro's Vercel preset only in Vercel CI so external hosting does not replace Lovable's managed deployment target.
+- Forward enquiries to Apps Script only from the server after the existing database insert; require explicit JSON save confirmation and never retry through a browser-only fallback, which would bypass Sheets and can duplicate writes.

@@ -16,6 +16,16 @@ Google Tag Manager: configure GA4, Google Ads conversions and Conversion Linker 
 
 The server validates input and inserts into `public.contact_submissions` using the public INSERT policy. It returns success only after storage acknowledges the insert. Visitors cannot read stored enquiries. There is no email notification or agency inbox UI; authorised team members can review submissions in Lovable Cloud. A failed or interrupted request never triggers a lead event or confirmation navigation. A clearly labelled website-verification test enquiry may be present after QA.
 
+### Google Sheets integration
+
+The existing database insert is preserved. `src/lib/enquiry.functions.ts` then invokes `src/lib/google-sheets.server.ts`, which sends `application/x-www-form-urlencoded` to the owner's Apps Script `/exec` deployment. Exact parameters: `fullName`, `businessEmail`, `contactNumber`, `companyName`, `service`, `message`. The helper reads Google's ContentService redirect with GET, never repeats the POST, and requires JSON `success: true`. HTTP 200 alone, a login page or `success: false` is not confirmation.
+
+`src/components/site/EnquiryForm.tsx` keeps its design and validation. A synchronous in-flight guard plus the disabled loading button prevents repeated clicks during a submission. The former browser database-only fallback is removed because it could bypass Google Sheets and duplicate a row after an ambiguous server response. Success, lead tracking and `/thank-you` occur only after both saves are confirmed. If Sheets fails after the database insert, the stored copy remains and an honest partial-delivery error appears. There are no automatic retries; network interruption or a later manual retry can still cause duplicates because the existing Apps Script contract has no idempotency key.
+
+**Live checks on 20 November 2026:** the database endpoint returned HTTP 521 and the read-query tool could not access it. A separate labelled Apps Script test returned JSON failure with message `Leads sheet not found`. No successful dual-destination submission is claimed. Fix the sheet tab name/reference in Apps Script and restore existing enquiry storage, then test again. The test failure did not produce a confirmed sheet row; storage readback/cleanup was unavailable during the outage.
+
+To test after those issues are resolved: open `/contact`, enter a distinctive test name, select a service and submit once. Confirm `/thank-you`, then check the matching row in Google Sheets and Lovable **More → Database → contact_submissions**. Confirm one row per destination and all six mapped values. Delete only your labelled test rows. Simulate a failed Google response and confirm the form stays on Contact without a lead conversion. The Google integration does not send owner emails.
+
 ## GitHub synchronization
 
 Connect through Lovable Project settings → Git; connecting creates a new repository. Repository connection and synchronization status must be checked in that interface. Keep generated integration files unchanged, do not commit private keys, and do not force-push or rewrite synchronized history.

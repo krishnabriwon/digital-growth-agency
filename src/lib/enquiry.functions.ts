@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { enquirySchema } from "./enquiry";
 
-/** Validates and persists an enquiry. Resolves only after the row is saved. */
+/** Confirms only after both the existing stored copy and Google Sheets succeed. */
 export const submitEnquiry = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => enquirySchema.parse(data))
   .handler(async ({ data }) => {
@@ -34,7 +34,17 @@ export const submitEnquiry = createServerFn({ method: "POST" })
     });
     if (error) {
       console.error("Enquiry insert failed", error.message);
-      throw new Error(error.message || "We couldn't save your enquiry. Please try again.");
+      return { ok: false as const, message: "We couldn't save your enquiry. Please try again in a moment." };
+    }
+    try {
+      const { sendEnquiryToSheet } = await import("./google-sheets.server");
+      await sendEnquiryToSheet(data);
+    } catch (error) {
+      console.error("Google Sheets enquiry confirmation failed", error instanceof Error ? error.message : "Unknown error");
+      return {
+        ok: false as const,
+        message: "Your enquiry was saved in our records, but Google Sheets delivery could not be confirmed. Please don't resubmit immediately, as it may already have reached the sheet.",
+      };
     }
     return { ok: true as const };
   });
