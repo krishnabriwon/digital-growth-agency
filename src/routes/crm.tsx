@@ -28,9 +28,10 @@ function CrmApp() {
 export const Route = createFileRoute("/crm")({
   head: () =>
     seo({
-      title: "DMA Agency CRM – Digital Marketing Agency Portal",
-      description: "Internal CRM portal for managing leads, pipeline, clients, and sales performance.",
+      title: "DMA Agency CRM – Private Staff Portal",
+      description: "Internal CRM portal for managing agency leads, pipeline, clients, and sales performance.",
       path: "/crm",
+      noindex: true,
     }),
   component: () => (
     <CrmAuthProvider>

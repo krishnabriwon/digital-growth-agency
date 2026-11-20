@@ -3,7 +3,7 @@ import { useCrmAuth } from "@/lib/crm/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ShieldCheck, Lock, Mail, ArrowRight, Sparkles, Building2, UserCheck, AlertCircle } from "lucide-react";
+import { ShieldCheck, Lock, Mail, ArrowRight, Building2, AlertCircle } from "lucide-react";
 
 export function LoginScreen() {
   const { signIn } = useCrmAuth();
@@ -27,13 +27,6 @@ export function LoginScreen() {
     if (!res.success) {
       setError(res.error || "Authentication failed. Check your credentials.");
     }
-  };
-
-  const handleQuickLogin = async (demoEmail: string, demoPass: string) => {
-    setError(null);
-    setIsSubmitting(true);
-    await signIn(demoEmail, demoPass);
-    setIsSubmitting(false);
   };
 
   return (
@@ -108,42 +101,17 @@ export function LoginScreen() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 bg-[#087BEA] hover:bg-[#087BEA]/90 text-white font-medium rounded-xl shadow-md shadow-[#087BEA]/20 transition-all flex items-center justify-center gap-2 mt-2"
+              className="w-full h-11 bg-[#087BEA] hover:bg-[#087BEA]/90 text-white font-medium rounded-xl shadow-md shadow-[#087BEA]/20 transition-all flex items-center justify-center gap-2 mt-4"
             >
               {isSubmitting ? "Authenticating..." : "Sign In to CRM"}
               <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
-
-          {/* Quick Demo Sign-in Helper for Agency Staff */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2.5 text-center flex items-center justify-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#087BEA]" /> Quick Demo Logins
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("admin@dma.agency", "admin123")}
-                className="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-[#092B55] text-xs font-semibold transition-colors"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#087BEA]" />
-                Admin (Full Access)
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("team@dma.agency", "team123")}
-                className="flex items-center justify-center gap-1.5 p-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[#092B55] text-xs font-semibold transition-colors"
-              >
-                <UserCheck className="w-3.5 h-3.5 text-slate-600" />
-                Team Member
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Footer info */}
         <p className="text-center text-xs text-slate-400 mt-6">
-          Digital Marketing Agency • Internal CRM Portal • Connected to Supabase
+          Digital Marketing Agency • Private Internal CRM • Authorized Personnel Only
         </p>
       </div>
     </div>
