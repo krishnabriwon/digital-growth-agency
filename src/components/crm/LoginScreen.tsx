@@ -65,7 +65,7 @@ export function LoginScreen() {
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <Input
                   type="email"
-                  placeholder="admin@dma.agency"
+                  placeholder="krishna.briwon@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-10 bg-slate-50/50 border-slate-200 focus:bg-white text-sm rounded-xl"

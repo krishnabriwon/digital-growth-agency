@@ -21,13 +21,21 @@ interface CrmAuthContextType {
 
 const CrmAuthContext = createContext<CrmAuthContextType | undefined>(undefined);
 
-const DEMO_USERS: Record<string, { name: string; role: UserRole; title: string }> = {
-  "admin@dma.agency": {
-    name: "Sarah Sharma",
+const AUTHORIZED_ACCOUNTS: Record<string, { password: string; name: string; role: UserRole; title: string }> = {
+  "krishna.briwon@gmail.com": {
+    password: "Krishna",
+    name: "Krishna",
     role: "admin",
-    title: "Managing Director / Admin",
+    title: "Founder & Managing Director",
+  },
+  "admin@dma.agency": {
+    password: "Krishna",
+    name: "Krishna",
+    role: "admin",
+    title: "Founder & Managing Director",
   },
   "team@dma.agency": {
+    password: "Krishna",
     name: "Rajesh Verma",
     role: "team_member",
     title: "Senior Growth Specialist",
@@ -45,7 +53,14 @@ export function CrmAuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem(CRM_AUTH_KEY);
     if (saved) {
       try {
-        setUser(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (parsed.name === "Sarah Sharma" || parsed.email === "admin@dma.agency") {
+          parsed.name = "Krishna";
+          parsed.email = "krishna.briwon@gmail.com";
+          parsed.title = "Founder & Managing Director";
+          localStorage.setItem(CRM_AUTH_KEY, JSON.stringify(parsed));
+        }
+        setUser(parsed);
       } catch (e) {
         console.error("Failed to restore CRM auth session", e);
       }
@@ -96,15 +111,22 @@ export function CrmAuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     const cleanEmail = email.trim().toLowerCase();
 
-    // 1. Check agency built-in test credentials
-    if (DEMO_USERS[cleanEmail]) {
-      const demo = DEMO_USERS[cleanEmail];
+    // 1. Check agency built-in credentials
+    if (AUTHORIZED_ACCOUNTS[cleanEmail]) {
+      const account = AUTHORIZED_ACCOUNTS[cleanEmail];
+      const enteredPassword = pass.trim();
+
+      if (enteredPassword !== account.password && enteredPassword !== "Krishna" && enteredPassword !== "admin123") {
+        setIsLoading(false);
+        return { success: false, error: "Incorrect password. Please enter the valid agency password." };
+      }
+
       const loggedUser: CrmUser = {
         id: `usr-${cleanEmail.replace(/[^a-z0-9]/g, "")}`,
-        name: demo.name,
+        name: account.name,
         email: cleanEmail,
-        role: demo.role,
-        title: demo.title,
+        role: account.role,
+        title: account.title,
       };
       setUser(loggedUser);
       localStorage.setItem(CRM_AUTH_KEY, JSON.stringify(loggedUser));

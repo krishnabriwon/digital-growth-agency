@@ -90,11 +90,11 @@ export const AGENCY_SERVICES: ServiceItem[] = [
 export const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "user-1",
-    name: "Sarah Sharma",
-    email: "admin@dma.agency",
+    name: "Krishna",
+    email: "krishna.briwon@gmail.com",
     role: "admin",
-    title: "Managing Director / Admin",
-    avatar: "SS",
+    title: "Founder & Managing Director",
+    avatar: "KB",
   },
   {
     id: "user-2",
