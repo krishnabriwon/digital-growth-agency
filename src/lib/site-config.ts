@@ -17,6 +17,8 @@ export const siteConfig = {
     whatsapp: "",
     /** Public enquiry email. Leave empty until available. */
     email: "",
+    /** Google Apps Script Web App URL for Google Sheets lead capture */
+    googleSheetsWebAppUrl: "https://script.google.com/macros/s/AKfycbzl09vZ7P6R4nU298g2fJLAy_2kMs1LFzntZIxzsfAf5FIK1cAzmTj2QWLthZJT5eihdg/exec",
   },
 
   tracking: {

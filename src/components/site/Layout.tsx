@@ -146,7 +146,12 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-navy-foreground/10">
-        <p className="container-site py-6 text-xs text-navy-foreground/60">© {new Date().getFullYear()} Digital Marketing Agency. All rights reserved.</p>
+        <div className="container-site py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-navy-foreground/60">
+          <p>© {new Date().getFullYear()} Digital Marketing Agency. All rights reserved.</p>
+          <a href="/crm" className="hover:text-navy-foreground transition-colors flex items-center gap-1 text-[11px] font-medium text-navy-foreground/75">
+            <span>Agency CRM Portal</span> →
+          </a>
+        </div>
       </div>
     </footer>
   );
