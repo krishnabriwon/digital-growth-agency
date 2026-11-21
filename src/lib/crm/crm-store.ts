@@ -206,15 +206,88 @@ export class CrmStore {
     this.isCloudConnected = true;
     this.lastSyncTime = new Date();
 
+    // Also auto-sync with Google Sheets
+    try {
+      const sheetRes = await this.autoSyncGoogleSheets();
+      if (sheetRes.newCount > 0) {
+        addedCount += sheetRes.newCount;
+      }
+    } catch (sheetSyncErr) {
+      console.warn("Google Sheet auto-sync within syncWithSupabase note:", sheetSyncErr);
+    }
+
     if (addedCount > 0) {
       safeSetItem(STORAGE_KEYS.LEADS, this.leads);
-      this.syncMessage = `Synced ${addedCount} new website enquiry!`;
+      this.syncMessage = `Synced ${addedCount} new lead(s) across Website & Google Sheet!`;
     } else {
-      this.syncMessage = "All website enquiries are up to date.";
+      this.syncMessage = "All website & Google Sheet enquiries are up to date.";
     }
 
     this.notify();
     return { newEnquiries: addedCount, message: this.syncMessage };
+  }
+
+  // --- Google Sheets Auto-Sync Engine ---
+  public getGoogleSheetUrl(): string {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("dma_google_sheet_url") || "";
+  }
+
+  public setGoogleSheetUrl(url: string): void {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("dma_google_sheet_url", url.trim());
+    this.notify();
+  }
+
+  public async autoSyncGoogleSheets(sheetUrlOverride?: string): Promise<{
+    newCount: number;
+    totalCount: number;
+    message: string;
+    success: boolean;
+  }> {
+    try {
+      const storedUrl =
+        sheetUrlOverride !== undefined
+          ? sheetUrlOverride
+          : typeof window !== "undefined"
+          ? localStorage.getItem("dma_google_sheet_url") || ""
+          : "";
+
+      const { syncAllGoogleSheetLeadsFn } = await import("@/lib/google-sheets.server");
+      const res = await syncAllGoogleSheetLeadsFn({ data: { sheetUrl: storedUrl } });
+
+      if (res.ok && Array.isArray(res.rows) && res.rows.length > 0) {
+        const addedCount = this.importGoogleSheetRows(res.rows);
+        this.isCloudConnected = true;
+        this.lastSyncTime = new Date();
+        this.syncMessage =
+          addedCount > 0
+            ? `Google Sheet auto-synced: ${addedCount} new lead(s) added! (Total: ${this.leads.length})`
+            : `Google Sheet up to date (${this.leads.length} leads).`;
+        this.notify();
+        return {
+          newCount: addedCount,
+          totalCount: this.leads.length,
+          message: this.syncMessage,
+          success: true,
+        };
+      }
+
+      return {
+        newCount: 0,
+        totalCount: this.leads.length,
+        message: res.error || "Google Sheet sync checked.",
+        success: res.ok,
+      };
+    } catch (err) {
+      console.warn("autoSyncGoogleSheets error:", err);
+      return {
+        newCount: 0,
+        totalCount: this.leads.length,
+        message: "Could not auto-sync with Google Sheet.",
+        success: false,
+      };
+    }
   }
 
   // --- Google Sheets Importer ---

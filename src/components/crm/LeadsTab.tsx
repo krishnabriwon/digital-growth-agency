@@ -94,7 +94,8 @@ export function LeadsTab({
   const [sheetPasteText, setSheetPasteText] = useState("");
   const [sheetSyncing, setSheetSyncing] = useState(false);
   const [sheetSyncResult, setSheetSyncResult] = useState<{ success: boolean; message: string } | null>(null);
-  const [sheetSyncTab, setSheetSyncTab] = useState<"url" | "paste">("url");
+  const [sheetSyncTab, setSheetSyncTab] = useState<"url" | "paste" | "script">("url");
+  const [copiedDoGet, setCopiedDoGet] = useState(false);
 
   // Form states for Add Lead
   const [formData, setFormData] = useState({
@@ -165,29 +166,19 @@ export function LeadsTab({
     setTimeout(() => setSyncFeedback(null), 5000);
   };
 
-  // Sync Google Sheet by URL
+  // Sync Google Sheet by URL or Web App
   const handleFetchSheet = async () => {
-    if (!sheetUrl.trim()) {
-      setSheetSyncResult({ success: false, message: "Please enter your Google Sheet URL or Sheet ID." });
-      return;
-    }
     setSheetSyncing(true);
     setSheetSyncResult(null);
     try {
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && sheetUrl.trim()) {
         localStorage.setItem("dma_google_sheet_url", sheetUrl.trim());
       }
-      const { fetchGoogleSheetLeadsFn } = await import("@/lib/google-sheets.server");
-      const res = await fetchGoogleSheetLeadsFn({ data: { sheetUrl: sheetUrl.trim() } });
-      if (!res.ok) {
-        setSheetSyncResult({ success: false, message: res.error || "Could not fetch Google Sheet." });
-      } else {
-        const count = crmStore.importGoogleSheetRows(res.rows);
-        setSheetSyncResult({
-          success: true,
-          message: `Successfully imported ${count} new lead(s) from your Google Sheet!`,
-        });
-      }
+      const res = await crmStore.autoSyncGoogleSheets(sheetUrl.trim() || undefined);
+      setSheetSyncResult({
+        success: res.success,
+        message: res.message,
+      });
     } catch (err) {
       setSheetSyncResult({
         success: false,
@@ -196,6 +187,20 @@ export function LeadsTab({
     } finally {
       setSheetSyncing(false);
     }
+  };
+
+  const handleCopyDoGet = () => {
+    const code = `function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Leads") || ss.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  return ContentService
+    .createTextOutput(JSON.stringify({ success: true, rows: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+    navigator.clipboard.writeText(code);
+    setCopiedDoGet(true);
+    setTimeout(() => setCopiedDoGet(false), 3000);
   };
 
   // Import directly pasted rows from Google Sheet
@@ -1641,10 +1646,10 @@ export function LeadsTab({
             </div>
 
             {/* Sync Tabs */}
-            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <div className="flex items-center gap-1.5 border-b border-slate-200 pb-2 overflow-x-auto">
               <button
                 onClick={() => setSheetSyncTab("url")}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                   sheetSyncTab === "url"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : "text-slate-600 hover:text-slate-900"
@@ -1653,8 +1658,18 @@ export function LeadsTab({
                 1-Click Sheet Link Sync
               </button>
               <button
+                onClick={() => setSheetSyncTab("script")}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
+                  sheetSyncTab === "script"
+                    ? "bg-blue-50 text-[#087BEA] border border-blue-200"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Apps Script doGet Setup
+              </button>
+              <button
                 onClick={() => setSheetSyncTab("paste")}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
                   sheetSyncTab === "paste"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : "text-slate-600 hover:text-slate-900"
@@ -1697,8 +1712,10 @@ export function LeadsTab({
                   />
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
-                  <p className="font-semibold text-slate-800">Quick Setup Tip:</p>
-                  <p>In your Google Sheet, click <strong>Share</strong> (top right) → Change to <strong>"Anyone with the link can view"</strong> so the CRM can automatically pull the leads.</p>
+                  <p className="font-semibold text-slate-800">Automatic Sync Mode:</p>
+                  <p>
+                    Once entered, the CRM automatically pulls all leads from the sheet on page load and every 25 seconds in the background. Make sure link sharing on the Google Sheet is set to <strong>"Anyone with the link can view"</strong>.
+                  </p>
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-2">
                   <Button
@@ -1720,8 +1737,43 @@ export function LeadsTab({
                         <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Syncing...
                       </>
                     ) : (
-                      "Fetch & Import Leads"
+                      "Fetch & Sync All Leads"
                     )}
+                  </Button>
+                </div>
+              </div>
+            ) : sheetSyncTab === "script" ? (
+              <div className="space-y-3 text-xs">
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Apps Script Permanent Auto-Fetch</Label>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    To make Google Sheets automatically readable without needing public link sharing, add this simple 5-line <code>doGet</code> function to your Google Apps Script:
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-[11px] overflow-x-auto relative">
+                  <pre>{`function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Leads") || ss.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  return ContentService
+    .createTextOutput(JSON.stringify({ success: true, rows: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}`}</pre>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <p className="text-[11px] text-slate-500">
+                    In your sheet: <strong>Extensions → Apps Script</strong> → Paste at bottom → <strong>Deploy → New version</strong>.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleCopyDoGet}
+                    className="text-xs h-8 bg-white"
+                  >
+                    <Copy className="w-3.5 h-3.5 mr-1" />
+                    {copiedDoGet ? "Copied!" : "Copy Code"}
                   </Button>
                 </div>
               </div>

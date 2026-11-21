@@ -14,13 +14,44 @@ import {
   Settings2,
   Bell,
   MessageSquare,
+  FileSpreadsheet,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export function SettingsTab() {
   const { user, switchRole } = useCrmAuth();
   const [copied, setCopied] = useState(false);
+  const [sheetUrlInput, setSheetUrlInput] = useState(() => crmStore.getGoogleSheetUrl());
+  const [isSavingSheet, setIsSavingSheet] = useState(false);
+  const [sheetSyncFeedback, setSheetSyncFeedback] = useState<string | null>(null);
+  const [copiedDoGet, setCopiedDoGet] = useState(false);
+
+  const handleSaveAndSyncSheet = async () => {
+    setIsSavingSheet(true);
+    setSheetSyncFeedback(null);
+    crmStore.setGoogleSheetUrl(sheetUrlInput);
+    const res = await crmStore.autoSyncGoogleSheets(sheetUrlInput);
+    setIsSavingSheet(false);
+    setSheetSyncFeedback(res.message);
+    setTimeout(() => setSheetSyncFeedback(null), 6000);
+  };
+
+  const handleCopyDoGet = () => {
+    const code = `function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Leads") || ss.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  return ContentService
+    .createTextOutput(JSON.stringify({ success: true, rows: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+    navigator.clipboard.writeText(code);
+    setCopiedDoGet(true);
+    setTimeout(() => setCopiedDoGet(false), 3000);
+  };
 
   const supabaseUrl =
     (typeof import.meta !== "undefined" && import.meta.env?.VITE_SUPABASE_URL) ||
@@ -192,6 +223,97 @@ export function SettingsTab() {
             Security (RLS) policies and an automatic trigger that converts new website enquiries directly into
             CRM leads.
           </p>
+        </div>
+      </div>
+
+      {/* Google Sheets Automated Live Data Synchronization */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-[#092B55] flex items-center gap-2">
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600" /> Google Sheets Live Auto-Sync Engine
+          </h2>
+          <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+            Background Sync Active (25s)
+          </Badge>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          The CRM automatically synchronizes all historical, current, and upcoming enquiries from your Google Sheet (<strong>Leads</strong> tab) directly into your CRM dashboard.
+        </p>
+
+        {sheetSyncFeedback && (
+          <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-xl flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#087BEA] shrink-0" />
+            <span>{sheetSyncFeedback}</span>
+          </div>
+        )}
+
+        {/* Option A: Direct Google Sheet URL Sync */}
+        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+          <div>
+            <Label className="text-xs font-bold text-slate-800">Option 1: Google Sheet URL Direct Auto-Pull</Label>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Paste the URL of your <strong>WEBSITE LEADS</strong> Google Sheet. Once saved, the CRM continuously syncs every single row.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Input
+              type="url"
+              placeholder="https://docs.google.com/spreadsheets/d/..."
+              value={sheetUrlInput}
+              onChange={(e) => setSheetUrlInput(e.target.value)}
+              className="h-9 text-xs rounded-xl bg-white"
+            />
+            <Button
+              size="sm"
+              disabled={isSavingSheet}
+              onClick={handleSaveAndSyncSheet}
+              className="h-9 text-xs bg-emerald-600 hover:bg-emerald-700 text-white shrink-0 font-semibold"
+            >
+              {isSavingSheet ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Syncing...
+                </>
+              ) : (
+                "Save & Sync All Leads"
+              )}
+            </Button>
+          </div>
+          <p className="text-[10px] text-slate-400">
+            Note: Set link sharing on the Google Sheet to <em>"Anyone with the link can view"</em> so the CRM can read the rows.
+          </p>
+        </div>
+
+        {/* Option B: Native Apps Script doGet Handler */}
+        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-xs font-bold text-slate-800">Option 2: Native Apps Script doGet Sync (Private)</Label>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Paste these 5 lines into your Google Apps Script editor (<strong>Extensions → Apps Script</strong>) and deploy as a new version:
+              </p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCopyDoGet}
+              className="h-8 text-xs bg-white shrink-0"
+            >
+              <Copy className="w-3.5 h-3.5 mr-1" />
+              {copiedDoGet ? "Copied!" : "Copy Code"}
+            </Button>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-900 text-slate-100 font-mono text-[11px] overflow-x-auto">
+            <pre>{`function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Leads") || ss.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  return ContentService
+    .createTextOutput(JSON.stringify({ success: true, rows: data }))
+    .setMimeType(ContentService.MimeType.JSON);
+}`}</pre>
+          </div>
         </div>
       </div>
 

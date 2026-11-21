@@ -47,14 +47,24 @@ export function CrmLayout() {
   const [selectedLeadForDetails, setSelectedLeadForDetails] = useState<Lead | null>(null);
   const [, setRerenderTrigger] = useState(0);
 
-  // Subscribe to store updates
+  // Subscribe to store updates and start auto-sync
   useEffect(() => {
     const unsub = crmStore.subscribe(() => {
       setRerenderTrigger((n) => n + 1);
     });
-    // Trigger initial sync with Supabase
+    // Initial sync with both server store & Google Sheet
     crmStore.syncWithSupabase();
-    return unsub;
+    crmStore.autoSyncGoogleSheets();
+
+    // Automated background polling every 25 seconds
+    const timer = setInterval(() => {
+      crmStore.autoSyncGoogleSheets();
+    }, 25000);
+
+    return () => {
+      unsub();
+      clearInterval(timer);
+    };
   }, []);
 
   const leads = crmStore.getLeads();
