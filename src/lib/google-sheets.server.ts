@@ -194,12 +194,12 @@ export const syncAllGoogleSheetLeadsFn = createServerFn({ method: "POST" })
       console.warn("Apps Script Web App GET query note:", e);
     }
 
-    // 2. Try Google Sheet Direct URL (from argument, siteConfig, or env)
+    // 2. Try Google Sheet Direct URL (from argument, siteConfig, env, or default sheet ID)
     const rawUrl =
       data.sheetUrl.trim() ||
       process.env["GOOGLE_SHEET_URL"] ||
       process.env["VITE_GOOGLE_SHEET_URL"] ||
-      "";
+      "14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40";
 
     if (rawUrl) {
       let sheetId = "";

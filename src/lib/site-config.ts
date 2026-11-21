@@ -19,6 +19,9 @@ export const siteConfig = {
     email: "",
     /** Google Apps Script Web App URL for Google Sheets lead capture */
     googleSheetsWebAppUrl: "https://script.google.com/macros/s/AKfycbzl09vZ7P6R4nU298g2fJLAy_2kMs1LFzntZIxzsfAf5FIK1cAzmTj2QWLthZJT5eihdg/exec",
+    /** Google Sheet Live Document URL */
+    googleSheetUrl: "https://docs.google.com/spreadsheets/d/14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40/edit?usp=sharing",
+    googleSheetId: "14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40",
   },
 
   tracking: {

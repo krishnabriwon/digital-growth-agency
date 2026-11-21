@@ -229,8 +229,12 @@ export class CrmStore {
 
   // --- Google Sheets Auto-Sync Engine ---
   public getGoogleSheetUrl(): string {
-    if (typeof window === "undefined") return "";
-    return localStorage.getItem("dma_google_sheet_url") || "";
+    if (typeof window === "undefined")
+      return "https://docs.google.com/spreadsheets/d/14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40/edit?usp=sharing";
+    return (
+      localStorage.getItem("dma_google_sheet_url") ||
+      "https://docs.google.com/spreadsheets/d/14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40/edit?usp=sharing"
+    );
   }
 
   public setGoogleSheetUrl(url: string): void {
@@ -250,8 +254,9 @@ export class CrmStore {
         sheetUrlOverride !== undefined
           ? sheetUrlOverride
           : typeof window !== "undefined"
-          ? localStorage.getItem("dma_google_sheet_url") || ""
-          : "";
+          ? localStorage.getItem("dma_google_sheet_url") ||
+            "https://docs.google.com/spreadsheets/d/14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40/edit?usp=sharing"
+          : "https://docs.google.com/spreadsheets/d/14rDDrtP_WAYgIX4Gxol3DmPn07M4HO7TpFtU3slKS40/edit?usp=sharing";
 
       const { syncAllGoogleSheetLeadsFn } = await import("@/lib/google-sheets.server");
       const res = await syncAllGoogleSheetLeadsFn({ data: { sheetUrl: storedUrl } });
@@ -305,15 +310,41 @@ export class CrmStore {
     let importedCount = 0;
     for (const r of rows) {
       if (!r.fullName || (!r.email && !r.phone)) continue;
-      const exists = this.leads.some(
-        (l) =>
-          (l.email && l.email.toLowerCase() === r.email.toLowerCase()) ||
-          (l.phone && l.phone === r.phone && l.fullName.toLowerCase() === r.fullName.toLowerCase())
-      );
+
+      const exists = this.leads.some((l) => {
+        // 1. Exact submission timestamp match
+        if (
+          r.submittedAt &&
+          l.createdAt &&
+          (l.createdAt === r.submittedAt ||
+            new Date(l.createdAt).getTime() === new Date(r.submittedAt).getTime())
+        ) {
+          return true;
+        }
+
+        // 2. Exact person match: Name AND (Email OR Phone)
+        const nameMatches =
+          l.fullName.trim().toLowerCase() === r.fullName.trim().toLowerCase();
+        const emailMatches =
+          l.email &&
+          r.email &&
+          l.email.trim().toLowerCase() === r.email.trim().toLowerCase();
+        const phoneMatches =
+          l.phone &&
+          r.phone &&
+          l.phone.replace(/\D/g, "") === r.phone.replace(/\D/g, "") &&
+          l.phone.replace(/\D/g, "").length >= 7;
+
+        if (nameMatches && (emailMatches || phoneMatches)) {
+          return true;
+        }
+        return false;
+      });
+
       if (!exists) {
         const nextIndex = this.leads.length + 1;
         const newLead: Lead = {
-          id: `lead-gsheet-${Date.now()}-${importedCount}`,
+          id: `lead-gsheet-${Date.now()}-${importedCount}-${Math.random().toString(36).slice(2, 6)}`,
           leadCode: `DMA-${1000 + nextIndex}`,
           fullName: r.fullName,
           email: r.email || "no-email@sheet.local",
