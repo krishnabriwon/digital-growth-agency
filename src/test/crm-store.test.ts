@@ -115,4 +115,21 @@ describe("DMA Agency CRM Store", () => {
     expect(completed?.status).toBe("completed");
     expect(completed?.completedAt).toBeDefined();
   });
+
+  it("can import rows from Google Sheet", () => {
+    const count = crmStore.importGoogleSheetRows([
+      {
+        fullName: "Sheet Test Lead",
+        email: "sheet.test@example.com",
+        phone: "+91 98888 77777",
+        company: "Sheet Corp",
+        service: "Google Ads / PPC Advertising",
+        message: "Imported from test suite",
+      },
+    ]);
+    expect(count).toBe(1);
+    const imported = crmStore.getLeads().find((l) => l.email === "sheet.test@example.com");
+    expect(imported).toBeDefined();
+    expect(imported?.source).toBe("Website Enquiry");
+  });
 });

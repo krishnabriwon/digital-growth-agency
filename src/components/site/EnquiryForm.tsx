@@ -49,6 +49,31 @@ export function EnquiryForm({ defaultService = "" }: { defaultService?: string }
         rememberConfirmedEnquiry();
         trackLead(parsed.data.service);
       });
+
+      // Record lead directly in browser CRM store so local tests appear immediately
+      try {
+        const { crmStore } = await import("@/lib/crm/crm-store");
+        crmStore.addLead(
+          {
+            fullName: parsed.data.fullName,
+            email: parsed.data.email,
+            phone: parsed.data.phone,
+            company: parsed.data.company || undefined,
+            service: parsed.data.service,
+            message: parsed.data.message,
+            source: "Website Enquiry",
+            status: "New",
+            priority: "High",
+            assignedTo: "Rajesh Verma",
+            estimatedBudget: 60000,
+            notes: "Real website lead submitted through contact form.",
+          },
+          "Website Visitor"
+        );
+      } catch (storeErr) {
+        console.warn("Client CRM store direct capture note:", storeErr);
+      }
+
       await navigate({ to: "/thank-you" });
     } catch (err) {
       setStatus("error");

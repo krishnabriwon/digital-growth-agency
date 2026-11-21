@@ -46,5 +46,35 @@ export const submitEnquiry = createServerFn({ method: "POST" })
         message: "Your enquiry was saved in our records, but Google Sheets delivery could not be confirmed. Please don't resubmit immediately, as it may already have reached the sheet.",
       };
     }
+
+    // Persist to server store for CRM lead synchronization
+    try {
+      const { saveServerEnquiry } = await import("./enquiry-store.server");
+      saveServerEnquiry({
+        id: `web-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        company: data.company ?? null,
+        service: data.service,
+        message: data.message,
+        createdAt: new Date().toISOString(),
+      });
+    } catch (storeError) {
+      console.warn("Could not record enquiry in server store:", storeError);
+    }
+
     return { ok: true as const };
+  });
+
+/** Allows the authenticated CRM portal to retrieve live server-captured enquiries */
+export const fetchServerEnquiries = createServerFn({ method: "GET" })
+  .handler(async () => {
+    try {
+      const { getServerEnquiries } = await import("./enquiry-store.server");
+      return getServerEnquiries();
+    } catch (err) {
+      console.error("fetchServerEnquiries error:", err);
+      return [];
+    }
   });

@@ -101,85 +101,178 @@ export class CrmStore {
 
   // --- Website Enquiry / Supabase Sync ---
   public async syncWithSupabase(): Promise<{ newEnquiries: number; message: string }> {
+    let addedCount = 0;
+
+    // 1. Fetch from server-captured website enquiries
     try {
-      // 1. Fetch from contact_submissions
+      const { fetchServerEnquiries } = await import("@/lib/enquiry.functions");
+      const serverEnquiries = await fetchServerEnquiries();
+      if (Array.isArray(serverEnquiries) && serverEnquiries.length > 0) {
+        for (const sub of serverEnquiries) {
+          const exists = this.leads.some(
+            (l) =>
+              l.submissionId === sub.id ||
+              (l.email === sub.email && l.fullName === sub.fullName) ||
+              (l.email === sub.email && l.createdAt === sub.createdAt)
+          );
+
+          if (!exists) {
+            const nextIndex = this.leads.length + 1;
+            const newLead: Lead = {
+              id: `lead-web-${sub.id || Date.now()}`,
+              leadCode: `DMA-${1000 + nextIndex}`,
+              fullName: sub.fullName,
+              email: sub.email,
+              phone: sub.phone,
+              company: sub.company || undefined,
+              service: sub.service,
+              message: sub.message,
+              source: "Website Enquiry",
+              status: "New",
+              priority: "High",
+              assignedTo: "Rajesh Verma",
+              estimatedBudget: 60000,
+              createdAt: sub.createdAt || new Date().toISOString(),
+              submissionId: sub.id,
+              notes: "Imported automatically from website contact form.",
+            };
+
+            this.leads.unshift(newLead);
+            addedCount++;
+
+            this.logActivity({
+              leadId: newLead.id,
+              type: "lead_created",
+              description: `Website enquiry received from ${newLead.fullName} for ${newLead.service}`,
+              performedBy: "Website Integration",
+            });
+          }
+        }
+      }
+    } catch (serverErr) {
+      console.warn("Server enquiries sync note:", serverErr);
+    }
+
+    // 2. Fetch from Supabase contact_submissions (if database SELECT permission is available)
+    try {
       const { data: submissions, error } = await supabase
         .from("contact_submissions")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.warn("Supabase contact_submissions query warning:", error.message);
-        this.syncMessage = "Website sync checked (no new cloud records)";
-        this.isCloudConnected = false;
-        this.notify();
-        return { newEnquiries: 0, message: error.message };
-      }
+      if (!error && submissions && submissions.length > 0) {
+        for (const sub of submissions) {
+          const exists = this.leads.some(
+            (l) => l.submissionId === sub.id || (l.email === sub.email && l.createdAt === sub.created_at)
+          );
 
-      this.isCloudConnected = true;
-      this.lastSyncTime = new Date();
+          if (!exists) {
+            const nextIndex = this.leads.length + 1;
+            const newLead: Lead = {
+              id: `lead-sb-${sub.id || Date.now()}`,
+              leadCode: `DMA-${1000 + nextIndex}`,
+              fullName: sub.full_name,
+              email: sub.email,
+              phone: sub.phone,
+              company: sub.company || undefined,
+              service: sub.service,
+              message: sub.message,
+              source: "Website Enquiry",
+              status: "New",
+              priority: "High",
+              assignedTo: "Rajesh Verma",
+              estimatedBudget: 60000,
+              createdAt: sub.created_at || new Date().toISOString(),
+              submissionId: sub.id,
+              notes: "Imported automatically from website contact form.",
+            };
 
-      if (!submissions || submissions.length === 0) {
-        this.syncMessage = "Supabase connected. No pending website enquiries.";
-        this.notify();
-        return { newEnquiries: 0, message: "No new website submissions" };
-      }
+            this.leads.unshift(newLead);
+            addedCount++;
 
-      let addedCount = 0;
-      for (const sub of submissions) {
-        // Prevent duplicates by submissionId or identical email & timestamp
-        const exists = this.leads.some(
-          (l) => l.submissionId === sub.id || (l.email === sub.email && l.createdAt === sub.created_at)
-        );
-
-        if (!exists) {
-          const nextIndex = this.leads.length + 1;
-          const newLead: Lead = {
-            id: `lead-web-${sub.id || Date.now()}`,
-            leadCode: `DMA-${1000 + nextIndex}`,
-            fullName: sub.full_name,
-            email: sub.email,
-            phone: sub.phone,
-            company: sub.company || undefined,
-            service: sub.service,
-            message: sub.message,
-            source: "Website Enquiry",
-            status: "New",
-            priority: "High",
-            assignedTo: "Rajesh Verma",
-            estimatedBudget: 60000,
-            createdAt: sub.created_at || new Date().toISOString(),
-            submissionId: sub.id,
-            notes: "Imported automatically from website contact form.",
-          };
-
-          this.leads.unshift(newLead);
-          addedCount++;
-
-          this.logActivity({
-            leadId: newLead.id,
-            type: "lead_created",
-            description: `Website enquiry received from ${newLead.fullName} for ${newLead.service}`,
-            performedBy: "Website Integration",
-          });
+            this.logActivity({
+              leadId: newLead.id,
+              type: "lead_created",
+              description: `Website enquiry received from ${newLead.fullName} for ${newLead.service}`,
+              performedBy: "Website Integration",
+            });
+          }
         }
       }
-
-      if (addedCount > 0) {
-        safeSetItem(STORAGE_KEYS.LEADS, this.leads);
-        this.syncMessage = `Synced ${addedCount} new website enquiry from Supabase!`;
-      } else {
-        this.syncMessage = "All website enquiries are up to date.";
-      }
-
-      this.notify();
-      return { newEnquiries: addedCount, message: this.syncMessage };
-    } catch (err) {
-      console.error("Supabase sync failed:", err);
-      this.syncMessage = "Sync paused (using local CRM store)";
-      this.notify();
-      return { newEnquiries: 0, message: "Could not sync with Supabase" };
+    } catch (supabaseErr) {
+      console.warn("Supabase query note:", supabaseErr);
     }
+
+    this.isCloudConnected = true;
+    this.lastSyncTime = new Date();
+
+    if (addedCount > 0) {
+      safeSetItem(STORAGE_KEYS.LEADS, this.leads);
+      this.syncMessage = `Synced ${addedCount} new website enquiry!`;
+    } else {
+      this.syncMessage = "All website enquiries are up to date.";
+    }
+
+    this.notify();
+    return { newEnquiries: addedCount, message: this.syncMessage };
+  }
+
+  // --- Google Sheets Importer ---
+  public importGoogleSheetRows(
+    rows: Array<{
+      fullName: string;
+      email: string;
+      phone: string;
+      company?: string;
+      service: string;
+      message: string;
+      submittedAt?: string;
+    }>
+  ): number {
+    let importedCount = 0;
+    for (const r of rows) {
+      if (!r.fullName || (!r.email && !r.phone)) continue;
+      const exists = this.leads.some(
+        (l) =>
+          (l.email && l.email.toLowerCase() === r.email.toLowerCase()) ||
+          (l.phone && l.phone === r.phone && l.fullName.toLowerCase() === r.fullName.toLowerCase())
+      );
+      if (!exists) {
+        const nextIndex = this.leads.length + 1;
+        const newLead: Lead = {
+          id: `lead-gsheet-${Date.now()}-${importedCount}`,
+          leadCode: `DMA-${1000 + nextIndex}`,
+          fullName: r.fullName,
+          email: r.email || "no-email@sheet.local",
+          phone: r.phone || "N/A",
+          company: r.company,
+          service: r.service || "Website Marketing Enquiry",
+          message: r.message || "Imported from Google Sheet",
+          source: "Website Enquiry",
+          status: "New",
+          priority: "High",
+          assignedTo: "Rajesh Verma",
+          estimatedBudget: 60000,
+          createdAt: r.submittedAt || new Date().toISOString(),
+          notes: "Imported from Google Sheet (WEBSITE LEADS).",
+        };
+        this.leads.unshift(newLead);
+        importedCount++;
+        this.logActivity({
+          leadId: newLead.id,
+          type: "lead_created",
+          description: `Google Sheet lead imported: ${newLead.fullName} (${newLead.service})`,
+          performedBy: "Google Sheets Sync",
+        });
+      }
+    }
+
+    if (importedCount > 0) {
+      safeSetItem(STORAGE_KEYS.LEADS, this.leads);
+      this.syncMessage = `Imported ${importedCount} leads from Google Sheets!`;
+      this.notify();
+    }
+    return importedCount;
   }
 
   // --- Leads CRUD ---

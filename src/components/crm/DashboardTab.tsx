@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   ArrowUpRight,
   Filter,
+  Sparkles,
 } from "lucide-react";
 import {
   AreaChart,
@@ -264,6 +265,32 @@ export function DashboardTab({
           </div>
         </div>
       </div>
+
+      {/* Welcome & Sync Helper Banner if leads list is empty */}
+      {totalLeadsCount === 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#087BEA] text-white flex items-center justify-center shrink-0 shadow-sm shadow-[#087BEA]/30">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-bold text-[#092B55] text-sm">Real-Data Mode Active</p>
+              <p className="text-slate-600 mt-0.5">
+                All fake dummy leads have been removed. Any real website submission will show up here, or you can 1-click sync from your Google Sheet.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              size="sm"
+              onClick={() => onNavigateTab("leads")}
+              className="h-8 text-xs bg-[#087BEA] hover:bg-[#087BEA]/90 text-white font-semibold"
+            >
+              Sync / View Leads
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Urgent Alerts Banner (Follow-ups) */}
       {(todayFollowUps.length > 0 || overdueFollowUps.length > 0) && (

@@ -27,6 +27,7 @@ import {
   AlertCircle,
   Eye,
   X,
+  FileSpreadsheet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,6 +85,16 @@ export function LeadsTab({
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+
+  // Google Sheets Sync Modal States
+  const [isSheetModalOpen, setIsSheetModalOpen] = useState(false);
+  const [sheetUrl, setSheetUrl] = useState(() =>
+    typeof window !== "undefined" ? localStorage.getItem("dma_google_sheet_url") || "" : ""
+  );
+  const [sheetPasteText, setSheetPasteText] = useState("");
+  const [sheetSyncing, setSheetSyncing] = useState(false);
+  const [sheetSyncResult, setSheetSyncResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [sheetSyncTab, setSheetSyncTab] = useState<"url" | "paste">("url");
 
   // Form states for Add Lead
   const [formData, setFormData] = useState({
@@ -152,6 +163,105 @@ export function LeadsTab({
     setIsSyncing(false);
     setSyncFeedback(res.message);
     setTimeout(() => setSyncFeedback(null), 5000);
+  };
+
+  // Sync Google Sheet by URL
+  const handleFetchSheet = async () => {
+    if (!sheetUrl.trim()) {
+      setSheetSyncResult({ success: false, message: "Please enter your Google Sheet URL or Sheet ID." });
+      return;
+    }
+    setSheetSyncing(true);
+    setSheetSyncResult(null);
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("dma_google_sheet_url", sheetUrl.trim());
+      }
+      const { fetchGoogleSheetLeadsFn } = await import("@/lib/google-sheets.server");
+      const res = await fetchGoogleSheetLeadsFn({ data: { sheetUrl: sheetUrl.trim() } });
+      if (!res.ok) {
+        setSheetSyncResult({ success: false, message: res.error || "Could not fetch Google Sheet." });
+      } else {
+        const count = crmStore.importGoogleSheetRows(res.rows);
+        setSheetSyncResult({
+          success: true,
+          message: `Successfully imported ${count} new lead(s) from your Google Sheet!`,
+        });
+      }
+    } catch (err) {
+      setSheetSyncResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Error connecting to Google Sheet.",
+      });
+    } finally {
+      setSheetSyncing(false);
+    }
+  };
+
+  // Import directly pasted rows from Google Sheet
+  const handleImportPastedSheet = () => {
+    if (!sheetPasteText.trim()) {
+      setSheetSyncResult({ success: false, message: "Please paste your copied sheet rows." });
+      return;
+    }
+    try {
+      const lines = sheetPasteText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      const rows: Array<{
+        fullName: string;
+        email: string;
+        phone: string;
+        company?: string;
+        service: string;
+        message: string;
+        submittedAt?: string;
+      }> = [];
+
+      for (const line of lines) {
+        const parts = line.includes("\t") ? line.split("\t") : line.split(",");
+        const cleanParts = parts.map((p) => p.trim().replace(/^"|"$/g, ""));
+        if (cleanParts.length < 2) continue;
+
+        const firstCol = cleanParts[0].toLowerCase();
+        if (firstCol.includes("timestamp") || firstCol.includes("date") || firstCol.includes("name")) {
+          continue;
+        }
+
+        const hasTimestamp = /^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}/.test(cleanParts[0]) || /:\d{2}/.test(cleanParts[0]);
+        const offset = hasTimestamp ? 1 : 0;
+
+        const fullName = cleanParts[offset] || "";
+        const email = cleanParts[offset + 1] || "";
+        const phone = cleanParts[offset + 2] || "";
+        const company = cleanParts[offset + 3] || undefined;
+        const service = cleanParts[offset + 4] || "Website Marketing Enquiry";
+        const message = cleanParts[offset + 5] || "Enquiry from Google Sheet";
+        const submittedAt = hasTimestamp ? cleanParts[0] : undefined;
+
+        if (fullName && (email || phone)) {
+          rows.push({ fullName, email, phone, company, service, message, submittedAt });
+        }
+      }
+
+      if (rows.length === 0) {
+        setSheetSyncResult({
+          success: false,
+          message: "No valid rows detected. Make sure to copy the rows including Name and Email/Phone.",
+        });
+        return;
+      }
+
+      const count = crmStore.importGoogleSheetRows(rows);
+      setSheetSyncResult({
+        success: true,
+        message: `Successfully imported ${count} new lead(s) from pasted rows!`,
+      });
+      setSheetPasteText("");
+    } catch (err) {
+      setSheetSyncResult({
+        success: false,
+        message: err instanceof Error ? err.message : "Error parsing pasted rows.",
+      });
+    }
   };
 
   // Add Lead Handler
@@ -322,6 +432,20 @@ export function LeadsTab({
           >
             <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isSyncing ? "animate-spin" : ""}`} />
             Sync Website
+          </Button>
+
+          {/* Sync Google Sheet */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setIsSheetModalOpen(true);
+              setSheetSyncResult(null);
+            }}
+            className="h-9 text-xs border-emerald-200 text-emerald-700 bg-emerald-50/60 hover:bg-emerald-100/70 font-semibold"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+            Sync Google Sheet
           </Button>
 
           {/* Export to CSV */}
@@ -1490,6 +1614,150 @@ export function LeadsTab({
                 Delete
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* GOOGLE SHEETS SYNC / IMPORT MODAL */}
+      {isSheetModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg p-6 animate-in fade-in zoom-in-95 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <FileSpreadsheet className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">Sync from Google Sheets</h3>
+                  <p className="text-[11px] text-slate-500">Import enquiries recorded in your Google Sheet</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsSheetModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Sync Tabs */}
+            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+              <button
+                onClick={() => setSheetSyncTab("url")}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                  sheetSyncTab === "url"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                1-Click Sheet Link Sync
+              </button>
+              <button
+                onClick={() => setSheetSyncTab("paste")}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                  sheetSyncTab === "paste"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Copy & Paste Rows
+              </button>
+            </div>
+
+            {sheetSyncResult && (
+              <div
+                className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                  sheetSyncResult.success
+                    ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    : "bg-red-50 text-red-800 border border-red-200"
+                }`}
+              >
+                {sheetSyncResult.success ? (
+                  <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                )}
+                <span>{sheetSyncResult.message}</span>
+              </div>
+            )}
+
+            {sheetSyncTab === "url" ? (
+              <div className="space-y-3 text-xs">
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Google Sheet URL or Sheet ID</Label>
+                  <p className="text-[11px] text-slate-500 mb-1.5">
+                    Copy the URL of your <strong>WEBSITE LEADS</strong> sheet from your browser tab and paste it below:
+                  </p>
+                  <Input
+                    type="url"
+                    placeholder="https://docs.google.com/spreadsheets/d/..."
+                    value={sheetUrl}
+                    onChange={(e) => setSheetUrl(e.target.value)}
+                    className="h-9 text-xs rounded-xl"
+                  />
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
+                  <p className="font-semibold text-slate-800">Quick Setup Tip:</p>
+                  <p>In your Google Sheet, click <strong>Share</strong> (top right) → Change to <strong>"Anyone with the link can view"</strong> so the CRM can automatically pull the leads.</p>
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsSheetModalOpen(false)}
+                    className="text-xs"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={sheetSyncing}
+                    onClick={handleFetchSheet}
+                    className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                  >
+                    {sheetSyncing ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Syncing...
+                      </>
+                    ) : (
+                      "Fetch & Import Leads"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                <div>
+                  <Label className="text-xs font-semibold text-slate-700">Paste Rows from Google Sheet</Label>
+                  <p className="text-[11px] text-slate-500 mb-1.5">
+                    Select & copy rows from your <strong>WEBSITE LEADS</strong> sheet (Ctrl+C) and paste them here (Ctrl+V):
+                  </p>
+                  <Textarea
+                    placeholder="21/11/2026&#9;Aarav Sharma&#9;aarav@example.com&#9;9876543210&#9;Acme Corp&#9;SEO&#9;Looking for lead generation"
+                    value={sheetPasteText}
+                    onChange={(e) => setSheetPasteText(e.target.value)}
+                    className="text-xs rounded-xl min-h-[110px] font-mono"
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsSheetModalOpen(false)}
+                    className="text-xs"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleImportPastedSheet}
+                    className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                  >
+                    Import Pasted Rows
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
