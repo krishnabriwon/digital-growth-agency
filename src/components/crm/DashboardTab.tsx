@@ -552,63 +552,74 @@ export function DashboardTab({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {leads.slice(0, 5).map((lead) => (
-                <tr key={lead.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3 pl-1 font-mono font-semibold text-[#087BEA]">{lead.leadCode}</td>
-                  <td className="py-3">
-                    <div className="font-semibold text-slate-900">{lead.fullName}</div>
-                    <div className="text-[11px] text-slate-500">{lead.company || lead.email}</div>
-                  </td>
-                  <td className="py-3 max-w-[160px] truncate font-medium text-slate-700">{lead.service}</td>
-                  <td className="py-3">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-700">
-                      {lead.source}
-                    </span>
-                  </td>
-                  <td className="py-3 font-semibold text-slate-900">
-                    ₹{lead.estimatedBudget.toLocaleString("en-IN")}
-                  </td>
-                  <td className="py-3">
-                    <span
-                      className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        lead.priority === "Urgent"
-                          ? "bg-red-100 text-red-700"
-                          : lead.priority === "High"
-                          ? "bg-orange-100 text-orange-700"
-                          : lead.priority === "Medium"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {lead.priority}
-                    </span>
-                  </td>
-                  <td className="py-3">
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] font-semibold ${
-                        lead.status === "Won"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          : lead.status === "Lost"
-                          ? "bg-rose-50 text-rose-700 border-rose-200"
-                          : "bg-blue-50 text-[#087BEA] border-blue-200"
-                      }`}
-                    >
-                      {lead.status}
-                    </Badge>
-                  </td>
-                  <td className="py-3 text-right pr-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => onSelectLead(lead)}
-                      className="h-7 text-xs text-[#087BEA] hover:bg-blue-50"
-                    >
-                      View Details
-                    </Button>
+              {leads.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-slate-400">
+                    <p className="font-semibold text-slate-600 text-xs">No active enquiries yet</p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      New enquiries submitted through your website contact form or added manually will appear here in real-time.
+                    </p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                leads.slice(0, 5).map((lead) => (
+                  <tr key={lead.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="py-3 pl-1 font-mono font-semibold text-[#087BEA]">{lead.leadCode}</td>
+                    <td className="py-3">
+                      <div className="font-semibold text-slate-900">{lead.fullName}</div>
+                      <div className="text-[11px] text-slate-500">{lead.company || lead.email}</div>
+                    </td>
+                    <td className="py-3 max-w-[160px] truncate font-medium text-slate-700">{lead.service}</td>
+                    <td className="py-3">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-700">
+                        {lead.source}
+                      </span>
+                    </td>
+                    <td className="py-3 font-semibold text-slate-900">
+                      ₹{lead.estimatedBudget.toLocaleString("en-IN")}
+                    </td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          lead.priority === "Urgent"
+                            ? "bg-red-100 text-red-700"
+                            : lead.priority === "High"
+                            ? "bg-orange-100 text-orange-700"
+                            : lead.priority === "Medium"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {lead.priority}
+                      </span>
+                    </td>
+                    <td className="py-3">
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] font-semibold ${
+                          lead.status === "Won"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : lead.status === "Lost"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-blue-50 text-[#087BEA] border-blue-200"
+                        }`}
+                      >
+                        {lead.status}
+                      </Badge>
+                    </td>
+                    <td className="py-3 text-right pr-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onSelectLead(lead)}
+                        className="h-7 text-xs text-[#087BEA] hover:bg-blue-50"
+                      >
+                        View Details
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

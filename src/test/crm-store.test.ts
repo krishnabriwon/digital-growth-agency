@@ -51,7 +51,7 @@ describe("DMA Agency CRM Store", () => {
     const prevStatus = lead.status;
     const nextStatus: LeadStatus = prevStatus === "Qualified" ? "Proposal Sent" : "Qualified";
 
-    const updated = crmStore.updateLead(lead.id, { status: nextStatus }, "Sarah Sharma");
+    const updated = crmStore.updateLead(lead.id, { status: nextStatus }, "Krishna");
 
     expect(updated?.status).toBe(nextStatus);
 
@@ -73,11 +73,11 @@ describe("DMA Agency CRM Store", () => {
       {
         contractValue: 90000,
         projectStartDate: "2026-11-20",
-        assignedManager: "Sarah Sharma",
+        assignedManager: "Krishna",
         servicesPurchased: [lead.service],
         notes: "Onboarding completed successfully.",
       },
-      "Sarah Sharma"
+      "Krishna"
     );
 
     expect(client).not.toBeNull();

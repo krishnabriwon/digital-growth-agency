@@ -94,7 +94,7 @@ export function FollowUpsTab({ onSelectLead }: { onSelectLead: (lead: Lead) => v
       type: scheduleData.type,
       scheduledAt: new Date(scheduleData.scheduledAt).toISOString(),
       notes: scheduleData.notes.trim() || undefined,
-      createdBy: "Sarah Sharma",
+      createdBy: "Krishna",
     });
 
     setIsScheduleModalOpen(false);

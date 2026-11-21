@@ -10,12 +10,12 @@ import {
 } from "./mock-data";
 
 const STORAGE_KEYS = {
-  LEADS: "dma_crm_leads_v1",
-  CLIENTS: "dma_crm_clients_v1",
-  FOLLOW_UPS: "dma_crm_follow_ups_v1",
-  ACTIVITIES: "dma_crm_activities_v1",
-  SERVICES: "dma_crm_services_v1",
-  TEAM: "dma_crm_team_v1",
+  LEADS: "dma_crm_leads_v2",
+  CLIENTS: "dma_crm_clients_v2",
+  FOLLOW_UPS: "dma_crm_follow_ups_v2",
+  ACTIVITIES: "dma_crm_activities_v2",
+  SERVICES: "dma_crm_services_v2",
+  TEAM: "dma_crm_team_v2",
 };
 
 function safeGetItem<T>(key: string, defaultValue: T): T {
@@ -65,10 +65,27 @@ export class CrmStore {
   }
 
   private initStore() {
-    this.leads = safeGetItem<Lead[]>(STORAGE_KEYS.LEADS, INITIAL_LEADS);
-    this.clients = safeGetItem<Client[]>(STORAGE_KEYS.CLIENTS, INITIAL_CLIENTS);
-    this.followUps = safeGetItem<FollowUp[]>(STORAGE_KEYS.FOLLOW_UPS, INITIAL_FOLLOW_UPS);
-    this.activities = safeGetItem<Activity[]>(STORAGE_KEYS.ACTIVITIES, INITIAL_ACTIVITIES);
+    if (typeof window !== "undefined") {
+      // Clear legacy sample/dummy data keys from previous sessions
+      localStorage.removeItem("dma_crm_leads_v1");
+      localStorage.removeItem("dma_crm_clients_v1");
+      localStorage.removeItem("dma_crm_follow_ups_v1");
+      localStorage.removeItem("dma_crm_activities_v1");
+    }
+
+    const rawLeads = safeGetItem<Lead[]>(STORAGE_KEYS.LEADS, INITIAL_LEADS);
+    // Keep only real leads (website submissions or user-created leads, not hardcoded dummy leads)
+    this.leads = rawLeads.filter((l) => !/^lead-[1-7]$/.test(l.id));
+
+    const rawClients = safeGetItem<Client[]>(STORAGE_KEYS.CLIENTS, INITIAL_CLIENTS);
+    this.clients = rawClients.filter((c) => !/^cli-[1-2]$/.test(c.id));
+
+    const rawFollowUps = safeGetItem<FollowUp[]>(STORAGE_KEYS.FOLLOW_UPS, INITIAL_FOLLOW_UPS);
+    this.followUps = rawFollowUps.filter((f) => !/^fu-[1-4]$/.test(f.id));
+
+    const rawActivities = safeGetItem<Activity[]>(STORAGE_KEYS.ACTIVITIES, INITIAL_ACTIVITIES);
+    this.activities = rawActivities.filter((a) => !/^act-[1-4]$/.test(a.id));
+
     this.services = safeGetItem<ServiceItem[]>(STORAGE_KEYS.SERVICES, AGENCY_SERVICES);
     this.teamMembers = safeGetItem<TeamMember[]>(STORAGE_KEYS.TEAM, TEAM_MEMBERS);
   }
@@ -307,7 +324,7 @@ export class CrmStore {
       projectStartDate: clientData.projectStartDate || new Date().toISOString().split("T")[0],
       contractValue: clientData.contractValue || lead.estimatedBudget || 75000,
       status: "Active",
-      assignedManager: clientData.assignedManager || lead.assignedTo || "Sarah Sharma",
+      assignedManager: clientData.assignedManager || lead.assignedTo || "Krishna",
       notes: clientData.notes || `Converted from lead ${lead.leadCode}. Initial requirements: ${lead.message}`,
       createdAt: new Date().toISOString(),
     };
