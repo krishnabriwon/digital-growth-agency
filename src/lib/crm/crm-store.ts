@@ -1,5 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Lead, Client, FollowUp, Activity, ServiceItem, TeamMember, LeadStatus } from "./types";
+import type {
+  Lead,
+  Client,
+  FollowUp,
+  Activity,
+  ServiceItem,
+  TeamMember,
+  LeadStatus,
+  CmsArticle,
+  CmsFaq,
+  CmsAnnouncement,
+  CmsHeroSettings,
+  CmsProcessStep,
+} from "./types";
 import {
   INITIAL_LEADS,
   INITIAL_CLIENTS,
@@ -8,6 +21,13 @@ import {
   AGENCY_SERVICES,
   TEAM_MEMBERS,
 } from "./mock-data";
+import {
+  INITIAL_CMS_ARTICLES,
+  INITIAL_CMS_FAQS,
+  INITIAL_CMS_ANNOUNCEMENT,
+  INITIAL_CMS_HERO,
+  INITIAL_CMS_PROCESS,
+} from "./cms-data";
 
 const STORAGE_KEYS = {
   LEADS: "dma_crm_leads_v2",
@@ -16,6 +36,11 @@ const STORAGE_KEYS = {
   ACTIVITIES: "dma_crm_activities_v2",
   SERVICES: "dma_crm_services_v2",
   TEAM: "dma_crm_team_v2",
+  ARTICLES: "dma_cms_articles_v2",
+  FAQS: "dma_cms_faqs_v2",
+  ANNOUNCEMENT: "dma_cms_announcement_v2",
+  HERO: "dma_cms_hero_v2",
+  PROCESS: "dma_cms_process_v2",
 };
 
 function safeGetItem<T>(key: string, defaultValue: T): T {
@@ -48,6 +73,11 @@ export class CrmStore {
   private activities: Activity[] = [];
   private services: ServiceItem[] = [];
   private teamMembers: TeamMember[] = [];
+  private articles: CmsArticle[] = [];
+  private faqs: CmsFaq[] = [];
+  private announcement: CmsAnnouncement = INITIAL_CMS_ANNOUNCEMENT;
+  private heroSettings: CmsHeroSettings = INITIAL_CMS_HERO;
+  private processSteps: CmsProcessStep[] = [];
   private listeners: Set<() => void> = new Set();
   public isCloudConnected = false;
   public lastSyncTime: Date | null = null;
@@ -88,6 +118,13 @@ export class CrmStore {
 
     this.services = safeGetItem<ServiceItem[]>(STORAGE_KEYS.SERVICES, AGENCY_SERVICES);
     this.teamMembers = safeGetItem<TeamMember[]>(STORAGE_KEYS.TEAM, TEAM_MEMBERS);
+
+    // CMS initializations
+    this.articles = safeGetItem<CmsArticle[]>(STORAGE_KEYS.ARTICLES, INITIAL_CMS_ARTICLES);
+    this.faqs = safeGetItem<CmsFaq[]>(STORAGE_KEYS.FAQS, INITIAL_CMS_FAQS);
+    this.announcement = safeGetItem<CmsAnnouncement>(STORAGE_KEYS.ANNOUNCEMENT, INITIAL_CMS_ANNOUNCEMENT);
+    this.heroSettings = safeGetItem<CmsHeroSettings>(STORAGE_KEYS.HERO, INITIAL_CMS_HERO);
+    this.processSteps = safeGetItem<CmsProcessStep[]>(STORAGE_KEYS.PROCESS, INITIAL_CMS_PROCESS);
   }
 
   public subscribe(callback: () => void): () => void {
@@ -726,6 +763,150 @@ export class CrmStore {
     this.notify();
     return newMember;
   }
+
+  // ==================== CMS OPERATIONS ====================
+  // --- Articles & Knowledge Hub ---
+  public getArticles(): CmsArticle[] {
+    return [...this.articles];
+  }
+
+  public getArticleBySlug(slug: string): CmsArticle | undefined {
+    return this.articles.find((a) => a.slug === slug);
+  }
+
+  public addArticle(data: Omit<CmsArticle, "id" | "createdAt" | "updatedAt">): CmsArticle {
+    const newArticle: CmsArticle = {
+      ...data,
+      id: `cms-art-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    this.articles.unshift(newArticle);
+    safeSetItem(STORAGE_KEYS.ARTICLES, this.articles);
+    this.logActivity({
+      type: "note_added",
+      description: `CMS Article published: "${newArticle.title}" in ${newArticle.category}`,
+      performedBy: "CMS Editor",
+    });
+    this.notify();
+    return newArticle;
+  }
+
+  public updateArticle(id: string, updates: Partial<CmsArticle>): void {
+    this.articles = this.articles.map((art) =>
+      art.id === id
+        ? {
+            ...art,
+            ...updates,
+            updatedAt: new Date().toISOString(),
+          }
+        : art
+    );
+    safeSetItem(STORAGE_KEYS.ARTICLES, this.articles);
+    this.notify();
+  }
+
+  public deleteArticle(id: string): void {
+    const art = this.articles.find((a) => a.id === id);
+    this.articles = this.articles.filter((a) => a.id !== id);
+    safeSetItem(STORAGE_KEYS.ARTICLES, this.articles);
+    if (art) {
+      this.logActivity({
+        type: "note_added",
+        description: `CMS Article removed: "${art.title}"`,
+        performedBy: "CMS Editor",
+      });
+    }
+    this.notify();
+  }
+
+  public toggleArticlePublish(id: string): void {
+    this.articles = this.articles.map((art) =>
+      art.id === id
+        ? {
+            ...art,
+            published: !art.published,
+            updatedAt: new Date().toISOString(),
+          }
+        : art
+    );
+    safeSetItem(STORAGE_KEYS.ARTICLES, this.articles);
+    this.notify();
+  }
+
+  // --- FAQs ---
+  public getFaqs(): CmsFaq[] {
+    return [...this.faqs].sort((a, b) => a.order - b.order);
+  }
+
+  public addFaq(data: Omit<CmsFaq, "id">): CmsFaq {
+    const newFaq: CmsFaq = {
+      ...data,
+      id: `cms-faq-${Date.now()}`,
+    };
+    this.faqs.push(newFaq);
+    safeSetItem(STORAGE_KEYS.FAQS, this.faqs);
+    this.notify();
+    return newFaq;
+  }
+
+  public updateFaq(id: string, updates: Partial<CmsFaq>): void {
+    this.faqs = this.faqs.map((f) => (f.id === id ? { ...f, ...updates } : f));
+    safeSetItem(STORAGE_KEYS.FAQS, this.faqs);
+    this.notify();
+  }
+
+  public deleteFaq(id: string): void {
+    this.faqs = this.faqs.filter((f) => f.id !== id);
+    safeSetItem(STORAGE_KEYS.FAQS, this.faqs);
+    this.notify();
+  }
+
+  public toggleFaqPublish(id: string): void {
+    this.faqs = this.faqs.map((f) => (f.id === id ? { ...f, published: !f.published } : f));
+    safeSetItem(STORAGE_KEYS.FAQS, this.faqs);
+    this.notify();
+  }
+
+  // --- Announcement Bar ---
+  public getAnnouncement(): CmsAnnouncement {
+    return { ...this.announcement };
+  }
+
+  public updateAnnouncement(data: Partial<CmsAnnouncement>): void {
+    this.announcement = {
+      ...this.announcement,
+      ...data,
+    };
+    safeSetItem(STORAGE_KEYS.ANNOUNCEMENT, this.announcement);
+    this.notify();
+  }
+
+  // --- Hero Settings ---
+  public getHeroSettings(): CmsHeroSettings {
+    return { ...this.heroSettings };
+  }
+
+  public updateHeroSettings(data: Partial<CmsHeroSettings>): void {
+    this.heroSettings = {
+      ...this.heroSettings,
+      ...data,
+    };
+    safeSetItem(STORAGE_KEYS.HERO, this.heroSettings);
+    this.notify();
+  }
+
+  // --- 6-Step Process ---
+  public getProcessSteps(): CmsProcessStep[] {
+    return [...this.processSteps].sort((a, b) => a.stepNumber - b.stepNumber);
+  }
+
+  public updateProcessStep(id: string, updates: Partial<CmsProcessStep>): void {
+    this.processSteps = this.processSteps.map((s) => (s.id === id ? { ...s, ...updates } : s));
+    safeSetItem(STORAGE_KEYS.PROCESS, this.processSteps);
+    this.notify();
+  }
+
 
   // --- CSV Export Utilities ---
   public exportLeadsToCsv(leadsToExport: Lead[] = this.leads): void {

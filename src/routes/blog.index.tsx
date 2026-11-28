@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Search, BookOpen } from "lucide-react";
 import { seo } from "@/lib/seo";
-import { blogPosts } from "@/lib/content";
+import { getAllBlogPosts } from "@/lib/content";
 import { CtaBand, PageHero } from "@/components/site/Layout";
 
 export const Route = createFileRoute("/blog/")({
@@ -18,15 +18,17 @@ export const Route = createFileRoute("/blog/")({
 
 function BlogIndex() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("" );
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const allPosts = useMemo(() => getAllBlogPosts(), []);
 
   const categories = useMemo(() => {
-    const set = new Set(blogPosts.map((p) => p.category));
+    const set = new Set(allPosts.map((p) => p.category));
     return ["All", ...Array.from(set)];
-  }, []);
+  }, [allPosts]);
 
   const filteredPosts = useMemo(() => {
-    return blogPosts.filter((post) => {
+    return allPosts.filter((post) => {
       const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
       const query = searchQuery.toLowerCase().trim();
       const matchesSearch =
@@ -36,7 +38,7 @@ function BlogIndex() {
         post.category.toLowerCase().includes(query);
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [allPosts, selectedCategory, searchQuery]);
 
   return (
     <>

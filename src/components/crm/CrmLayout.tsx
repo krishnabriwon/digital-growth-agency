@@ -25,6 +25,7 @@ import {
   RefreshCw,
   Search,
   Sparkles,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ import { DashboardTab } from "./DashboardTab";
 import { LeadsTab } from "./LeadsTab";
 import { FollowUpsTab } from "./FollowUpsTab";
 import { ClientsTab } from "./ClientsTab";
+import { CmsTab } from "./CmsTab";
 import { ServicesTab } from "./ServicesTab";
 import { ReportsTab } from "./ReportsTab";
 import { TeamTab } from "./TeamTab";
@@ -89,6 +91,7 @@ export function CrmLayout() {
     { id: "pipeline", label: "Sales Pipeline", icon: GitPullRequest },
     { id: "followups", label: "Follow-ups", icon: CalendarClock, badge: todayFollowUpsCount || undefined },
     { id: "clients", label: "Clients", icon: Briefcase, badge: clients.length },
+    { id: "cms", label: "CMS & Content", icon: FileText, badge: "Live" },
     { id: "services", label: "Services", icon: Layers },
     { id: "reports", label: "Reports & Analytics", icon: BarChart3 },
     { id: "team", label: "Team Members", icon: UserCheck },
@@ -405,6 +408,8 @@ export function CrmLayout() {
           {activeTab === "clients" && (
             <ClientsTab onSelectLead={handleSelectLead} />
           )}
+
+          {activeTab === "cms" && <CmsTab />}
 
           {activeTab === "services" && <ServicesTab />}
 

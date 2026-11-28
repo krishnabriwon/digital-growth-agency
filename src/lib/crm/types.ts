@@ -122,3 +122,61 @@ export interface ServiceItem {
 }
 
 export type DateRangePreset = "today" | "last_7_days" | "last_30_days" | "this_month" | "all_time" | "custom";
+
+// ==================== CMS TYPES ====================
+export interface CmsArticleSection {
+  heading: string;
+  body: string[];
+}
+
+export interface CmsArticle {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  readTime: string;
+  published: boolean;
+  featured?: boolean;
+  updatedAt: string;
+  createdAt: string;
+  author?: string;
+  sections: CmsArticleSection[];
+}
+
+export interface CmsFaq {
+  id: string;
+  q: string;
+  a: string;
+  category: "General" | "Services" | "Pricing" | "Process" | "Guarantees";
+  order: number;
+  published: boolean;
+}
+
+export interface CmsAnnouncement {
+  enabled: boolean;
+  badgeText: string;
+  message: string;
+  linkText: string;
+  linkUrl: string;
+  theme: "primary" | "navy" | "emerald" | "amber";
+}
+
+export interface CmsHeroSettings {
+  eyebrow: string;
+  title: string;
+  highlightText: string;
+  subtitle: string;
+  primaryCtaText: string;
+  primaryCtaLink: string;
+  secondaryCtaText: string;
+  secondaryCtaLink: string;
+}
+
+export interface CmsProcessStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  text: string;
+}
+

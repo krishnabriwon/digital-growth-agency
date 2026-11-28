@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Menu, X, Phone, MessageCircle, ArrowRight, Check } from "lucide-react";
 import { siteConfig, hasPhone, hasWhatsApp } from "@/lib/site-config";
 import { services, type Service } from "@/lib/services";
 import { pushEvent, trackCta } from "@/lib/tracking";
 import { Button } from "@/components/ui/button";
+import { getActiveAnnouncement, getActiveFaqs } from "@/lib/content";
 
 export function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -33,8 +34,38 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [announcement, setAnnouncement] = useState<{
+    enabled: boolean;
+    badgeText: string;
+    message: string;
+    linkText: string;
+    linkUrl: string;
+  } | null>(null);
+
+  useEffect(() => {
+    setAnnouncement(getActiveAnnouncement());
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur">
+      {announcement && announcement.enabled && (
+        <div className="bg-[#092B55] text-white py-2 px-4 text-xs font-medium border-b border-white/10 flex items-center justify-center gap-2 sm:gap-3 transition-all">
+          {announcement.badgeText && (
+            <span className="bg-[#087BEA] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+              {announcement.badgeText}
+            </span>
+          )}
+          <span className="truncate text-slate-200">{announcement.message}</span>
+          {announcement.linkText && (
+            <Link
+              to={announcement.linkUrl as "/contact"}
+              className="font-bold text-[#39A9FF] hover:text-white underline underline-offset-2 shrink-0 flex items-center gap-1"
+            >
+              {announcement.linkText} →
+            </Link>
+          )}
+        </div>
+      )}
       <div className="container-site grid h-18 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 lg:flex lg:justify-between">
         <Link to="/" className="min-w-0" aria-label="Digital Marketing Agency home" onClick={() => setOpen(false)}><Logo /></Link>
         <nav aria-label="Main" className="hidden items-center gap-7 lg:flex">
@@ -187,10 +218,21 @@ export function ServiceCard({ s }: { s: Service }) {
   );
 }
 
-export function Faqs({ items }: { items: { q: string; a: string }[] }) {
+export function Faqs({ items }: { items?: { q: string; a: string }[] }) {
+  const [list, setList] = useState<{ q: string; a: string }[]>(items || []);
+
+  useEffect(() => {
+    const dynamicFaqs = getActiveFaqs();
+    if (dynamicFaqs && dynamicFaqs.length > 0) {
+      setList(dynamicFaqs);
+    }
+  }, []);
+
+  const displayItems = list.length > 0 ? list : items || [];
+
   return (
     <div className="divide-y rounded-2xl border bg-card shadow-card">
-      {items.map((f) => (
+      {displayItems.map((f) => (
         <details key={f.q} className="group p-6">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-navy">
             {f.q}

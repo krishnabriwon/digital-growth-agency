@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import hero from "@/assets/hero-growth.jpg";
 import { seo } from "@/lib/seo";
 import { services } from "@/lib/services";
-import { benefits, homeFaqs } from "@/lib/content";
+import { benefits, homeFaqs, getActiveHero } from "@/lib/content";
 import { BtnLink, CheckItem, CtaBand, Faqs, SectionHead, ServiceCard } from "@/components/site/Layout";
 import { IndustryGrid, ProcessGrid, WhyGrid } from "@/components/site/Sections";
 import { trackCta } from "@/lib/tracking";
@@ -74,17 +75,40 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const [heroContent, setHeroContent] = useState<any>(null);
+
+  useEffect(() => {
+    setHeroContent(getActiveHero());
+  }, []);
+
+  const eyebrow = heroContent?.eyebrow || "Digital marketing across Pan India";
+  const title = heroContent?.title || "Driving Digital Growth.";
+  const highlightText = heroContent?.highlightText || "Delivering Real Results.";
+  const subtitle =
+    heroContent?.subtitle ||
+    "We help ambitious businesses get found, build trust and turn online attention into genuine enquiries — with strategy-led SEO, advertising, content and websites.";
+  const primaryCta = heroContent?.primaryCtaText || "Get a Free Consultation";
+  const primaryLink = (heroContent?.primaryCtaLink as "/contact") || "/contact";
+  const secondaryCta = heroContent?.secondaryCtaText || "Explore Services";
+  const secondaryLink = (heroContent?.secondaryCtaLink as "/services") || "/services";
+
   return (
     <>
       <section className="bg-gradient-hero">
         <div className="container-site grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2">
           <div className="animate-rise">
-            <p className="eyebrow">Digital marketing across Pan India</p>
-            <h1 className="mt-4 text-4xl font-extrabold leading-tight md:text-6xl">Driving Digital Growth. <span className="text-gradient">Delivering Real Results.</span></h1>
-            <p className="mt-6 max-w-xl text-lg text-muted-foreground">We help ambitious businesses get found, build trust and turn online attention into genuine enquiries — with strategy-led SEO, advertising, content and websites.</p>
+            <p className="eyebrow">{eyebrow}</p>
+            <h1 className="mt-4 text-4xl font-extrabold leading-tight md:text-6xl">
+              {title} <span className="text-gradient">{highlightText}</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg text-muted-foreground">{subtitle}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <BtnLink to="/contact" onClick={() => trackCta("Get a Free Consultation", "home_hero")}>Get a Free Consultation <ArrowRight className="h-4 w-4" /></BtnLink>
-              <BtnLink to="/services" variant="outline" onClick={() => trackCta("Explore Services", "home_hero")}>Explore Services</BtnLink>
+              <BtnLink to={primaryLink} onClick={() => trackCta(primaryCta, "home_hero")}>
+                {primaryCta} <ArrowRight className="h-4 w-4" />
+              </BtnLink>
+              <BtnLink to={secondaryLink} variant="outline" onClick={() => trackCta(secondaryCta, "home_hero")}>
+                {secondaryCta}
+              </BtnLink>
             </div>
           </div>
           <img src={hero} alt="Illustration of digital marketing growth with rising charts, search and analytics dashboards" width={1280} height={1024} className="w-full rounded-3xl" fetchPriority="high" />

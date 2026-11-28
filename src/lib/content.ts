@@ -229,4 +229,97 @@ export const blogPosts: BlogPost[] = [
   },
 ];
 
-export const getPost = (slug: string) => blogPosts.find((p) => p.slug === slug);
+export const getAllBlogPosts = (): BlogPost[] => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dma_cms_articles_v2");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const published = parsed.filter((p: any) => p.published !== false);
+          if (published.length > 0) return published as BlogPost[];
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read dynamic articles from localStorage", e);
+    }
+  }
+  return blogPosts;
+};
+
+export const getPost = (slug: string): BlogPost | undefined => {
+  const posts = getAllBlogPosts();
+  return posts.find((p) => p.slug === slug);
+};
+
+export const getActiveFaqs = (): { q: string; a: string; category?: string }[] => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dma_cms_faqs_v2");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const published = parsed
+            .filter((f: any) => f.published !== false)
+            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+          if (published.length > 0) return published;
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read dynamic faqs from localStorage", e);
+    }
+  }
+  return homeFaqs;
+};
+
+export const getActiveAnnouncement = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dma_cms_announcement_v2");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.enabled) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read dynamic announcement from localStorage", e);
+    }
+  }
+  return null;
+};
+
+export const getActiveHero = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dma_cms_hero_v2");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.title) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read dynamic hero from localStorage", e);
+    }
+  }
+  return null;
+};
+
+export const getActiveProcessSteps = () => {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dma_cms_process_v2");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.sort((a: any, b: any) => (a.stepNumber || 0) - (b.stepNumber || 0));
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read dynamic process from localStorage", e);
+    }
+  }
+  return processSteps;
+};
+
